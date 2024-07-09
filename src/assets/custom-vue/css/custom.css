@@ -1,42 +1,99 @@
 .simpel-text {
-    font-family: Haettenschweiler, "Arial Narrow Bold", sans-serif;
-    letter-spacing: 1px;
-    font-size: 40px;
+  font-family: Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  letter-spacing: 1px;
+  font-size: 40px;
 }
 
 .simpel-nav {
-    border-radius: 10px;
-    width: 100%;
+  border-radius: 10px;
+  width: 100%;
 }
 
 .simpel-map-container {
-    height: 92.5vh;
+  height: 92.5vh;
 }
 
 .boxed {
-    background: url("../../app/bg-simpel.png");
+  background: url("../../app/bg-simpel.png");
 }
 
-.simpel-ship-detail {
-    z-index: 999;
-    width: fit-content;
-    min-width: 500px;
-    position: absolute;
-    right: 0px;
-    bottom: 0px;
-    transition: 0.3s ease;
-    background: #fff;
-    border-top-left-radius: 20px;
+.bg-solid-light {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+.bg-solid-secondary {
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: #fff !important;
+}
+
+body.dark .bg-solid-light {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark thead,
+.dark tbody,
+.dark tfoot,
+.dark tr,
+.dark td,
+.dark th {
+  color: #fff !important;
+}
+
+#arrivalBtn {
+  /* position: absolute; */
+  /* right: 30px; */
+  top: 100px;
+  z-index: 99999 !important;
+}
+
+#insideArrivalBtn {
+  position: absolute;
+  width: 40px;
+  height: 86px !important;
+  top: 0;
+  left: -40px;
+  background: #C03221;
+  color: #fff !important;
+  border: 0px !important;
+  padding: 10px 10px !important;
+  border-radius: 10px 0 0 10px;
+  text-orientation: upright;
+  writing-mode: vertical-lr;
+}
+
+.inspeksi-mobile {
+  overflow: visible !important;
 }
 
 .simpel-ship-arrival {
-    z-index: 500;
-    width: fit-content;
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    transition: 0.3s ease;
-    background: #fff;
+  right: -1000px !important;
+  transition: all 0.7s ease;
+}
+
+.simpel-ship-arrival.show {
+  right: 10px !important;
+}
+
+.simpel-ship-detail {
+  z-index: 999;
+  width: fit-content;
+  min-width: 500px;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  transition: 0.3s ease;
+  background: #fff;
+  border-top-left-radius: 20px;
+}
+
+.simpel-ship-arrival {
+  z-index: 500;
+  width: fit-content;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  transition: 0.3s ease;
+  background: #fff;
 }
 
 /* .nav-item:not() {
@@ -88,79 +145,76 @@
     border-radius: 5px;
 } */
 
-
-
 /* TOGGLE DARKMODE  */
 
 label.darkmode {
-    width: 72px;
-    height: 30px;
-    position: relative;
-    display: block;
-    background: #ebebeb;
-    border-radius: 15px;
-    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4), inset 0 -3px 8px rgba(255, 255, 255, 0.4);
-    cursor: pointer;
-    transition: 0.3s;
+  width: 72px;
+  height: 30px;
+  position: relative;
+  display: block;
+  background: #ebebeb;
+  border-radius: 15px;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4), inset 0 -3px 8px rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 label.darkmode:after {
-    content: "";
-    width: 22px;
-    height: 22px;
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    background: linear-gradient(180deg, #ffcc89, #d8860b);
-    border-radius: 11px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    transition: 0.3s;
+  content: "";
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: linear-gradient(180deg, #ffcc89, #d8860b);
+  border-radius: 11px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
 }
 
 input.darkmode {
-    width: 0;
-    height: 0;
-    visibility: hidden;
+  width: 0;
+  height: 0;
+  visibility: hidden;
 }
 
-input.darkmode:checked+label.darkmode {
-    background: #242424;
+input.darkmode:checked + label.darkmode {
+  background: #242424;
 }
 
-input.darkmode:checked+label.darkmode:after {
-    left: 66px;
-    transform: translateX(-100%);
-    background: linear-gradient(180deg, #777, #3a3a3a);
+input.darkmode:checked + label.darkmode:after {
+  left: 66px;
+  transform: translateX(-100%);
+  background: linear-gradient(180deg, #777, #3a3a3a);
 }
 
 label.darkmode:active:after {
-    width: 30px;
+  width: 30px;
 }
 
 label.darkmode svg {
-    position: absolute;
-    width: 16px;
-    top: 6px;
-    z-index: 100;
+  position: absolute;
+  width: 16px;
+  top: 6px;
+  z-index: 100;
 }
 
 label.darkmode svg.sun {
-    left: 7px;
-    fill: #fff;
-    transition: 0.3s;
+  left: 7px;
+  fill: #fff;
+  transition: 0.3s;
 }
 
 label.darkmode svg.moon {
-    left: 48px;
-    fill: #7e7e7e;
-    transition: 0.3s;
+  left: 48px;
+  fill: #7e7e7e;
+  transition: 0.3s;
 }
 
-input.darkmode:checked+label.darkmode svg.sun {
-    fill: #7e7e7e;
+input.darkmode:checked + label.darkmode svg.sun {
+  fill: #7e7e7e;
 }
 
-input.darkmode:checked+label.darkmode svg.moon {
-    fill: #fff;
+input.darkmode:checked + label.darkmode svg.moon {
+  fill: #fff;
 }
-

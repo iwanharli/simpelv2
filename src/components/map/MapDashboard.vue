@@ -4,7 +4,12 @@
 
     <div id="shipDetailsDiv" class="simpel-ship-detail"></div>
 
-    <div id="shipArrival" class="simpel-ship-arrival inspeksi-mobile bg-soft-light">
+    <a class="btn btn-fixed-end btn-secondary btn-icon btn-setting" id="arrivalBtn" v-if="!muncul" v-on:click="toggleArrival()" style="border-radius: 20px 0px 0px 20px; border: 2px solid white">
+      <div class="animated-scale" style="font-size: 22px">🚢</div>
+    </a>
+
+    <div id="shipArrival" :class="['simpel-ship-arrival', 'inspeksi-mobile', 'bg-soft-light', muncul ? 'show' : '']">
+      <button v-on:click="toggleArrival()" id="insideArrivalBtn">CLOSE</button>
       <b-card-header class="bg-secondary text-light pb-4">
         <div class="header-title">
           <b-row>
@@ -23,7 +28,7 @@
         <div class="table-responsive">
           <table id="basic-table" class="table table-border mb-0" role="grid">
             <thead>
-              <tr class="bg-soft-secondary text-secondary">
+              <tr class="bg-solid-secondary text-secondary">
                 <th style="font-weight: bolder; width: 3px" class="text-center">ID</th>
                 <th style="font-weight: bolder">NAMA KAPAL</th>
                 <th style="font-weight: bolder" class="text-center">CHECKIN</th>
@@ -37,16 +42,16 @@
               </tr>
 
               <tr v-for="(item, index) in this.shipArrival" :key="index++" v-else>
-                <td class="text-center bg-soft-dark" style="font-weight: bolder">
+                <td class="text-center bg-solid-light" style="font-weight: bolder">
                   {{ index }}
                 </td>
-                <td class="bg-soft-dark" style="text-transform: uppercase; font-weight: bolder">
+                <td class="bg-solid-light" style="text-transform: uppercase; font-weight: bolder">
                   {{ item.ship_name }}
                 </td>
-                <td class="bg-soft-dark text-center">
+                <td class="bg-solid-light text-center">
                   {{ item.checkin_date }}
                 </td>
-                <td class="text-center bg-soft-dark">
+                <td class="text-center bg-solid-light">
                   <span class="badge bg-info ml-2 p-1" style="font-size: 10px; width: 100%">
                     INSPEKSI &nbsp;
                     <span class="circle-dashboard" style="background-color: green" v-if="item.is_inspected === 1"></span>
@@ -95,6 +100,7 @@ export default {
       harbour_geo: [],
       selectedShip: [],
       ship_collection: [],
+      muncul: false,
       // ws_url: "ws://localhost:8080",
       // ws_url: "ws://103.179.86.243:9016/api/v1/dashboard/ship-monitor/open-websocket"
 
@@ -112,7 +118,7 @@ export default {
 
     this.getShipDocking()
 
-    console.log('aa', localStorage.getItem('token'))
+    console.log("aa", localStorage.getItem("token"))
   },
 
   unmounted() {
@@ -121,6 +127,13 @@ export default {
   },
 
   methods: {
+    toggleArrival() {
+      this.muncul = !this.muncul
+      console.clear()
+      console.log("muncul ??", this.muncul)
+    },
+
+    /*****************/
     async getShipDocking() {
       const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
 
@@ -395,8 +408,8 @@ export default {
     },
 
     /***********************************/
-    // get this when api socket is request 
-    
+    // get this when api socket is request
+
     getAppSetting() {
       axios
         .get("api/v1/setting/web", {
@@ -553,7 +566,7 @@ export default {
 
 /* Optional: Style for the button */
 .btn-primary {
-  margin-top: 10px;
+  /* margin-top: 10px; */
 }
 
 .leaflet-top,
