@@ -37,7 +37,7 @@
       <br />
       <br />
       <li><hr class="hr-horizontal" /></li>
-      <side-menu title="LAIN LAIN" :static-item="true"></side-menu>
+      <side-menu title="LAINNYA" :static-item="true"></side-menu>
       <side-menu title="PENGATURAN" icon="setting" :caret-icon="true" :route="{ popup: 'false', to: 'setting' }" @onClick="toggle" :active="currentRoute.includes('setting')" style="font-weight: bolder" v-if="userRole === 'superadmin'">
         <b-collapse tag="ul" class="sub-nav" id="setting" accordion="sidebar-menu" :visible="currentRoute.includes('setting')">
           <side-menu isTag="router-link" title="Perangkat" icon="circle" :icon-size="10" icon-type="solid" miniTitle="L" :route="{ to: 'admin.setting-application' }"></side-menu>

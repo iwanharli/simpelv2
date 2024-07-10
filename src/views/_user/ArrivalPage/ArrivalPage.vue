@@ -9,10 +9,13 @@
                 <h4 style="font-weight: bold; color: white">KEDATANGAN KAPAL</h4>
               </b-col>
               <b-col xl="3" lg="4" md="5" sm="5" class="d-flex justify-content-end custom-export">
+                <select class="form-select" v-model="rowsPerPage" @change="fetchData" :style="{ width: '100px' }">
+                  <option v-for="option in rowsOptions" :key="option" :value="option">{{ option }}</option>
+                </select>
                 <!-- <button style="display: inline-block" class="btn btn-secondary text-white" type="button" id="kapal_detail" @click="downloadCSV"><i class="ti ti-download me-sm-1"></i> EXPORT CSV</button> -->
               </b-col>
               <b-col xl="12" lg="12" md="12" sm="12" class="mt-3">
-                <input type="text" class="form-control border-0" placeholder="Pencarian (Kapal)" v-model="searchQuery" />
+                <input type="text" class="form-control border-0" placeholder="Pencarian (Nama Kapal) - tekan enter" v-model="searchQuery" @keyup.enter="fetchShipArrival" />
               </b-col>
             </b-row>
           </div>
@@ -32,11 +35,11 @@
               </thead>
               <tbody>
                 <!-- Check if pendingList has data -->
-                <tr v-if="!this.shipArrival">
+                <tr v-if="!paginatedShips">
                   <td colspan="6" class="bg-soft-white">Data kosong</td>
                 </tr>
 
-                <tr v-for="(item, index) in this.shipArrival" :key="index++" v-else>
+                <tr v-for="(item, index) in paginatedShips" :key="index++" v-else>
                   <td class="text-center bg-soft-light">
                     {{ index }}
                   </td>
@@ -111,29 +114,26 @@ export default {
       shipArrival: [],
 
       currentPage: 1,
-      itemsPerPage: 10,
-      selected: null,
-      options: ["Singa", "Gajah"]
+      rowsPerPage: 5,
+      rowsOptions: [5, 10, 15, "ALL"],
+      searchQuery: ""
     }
   },
 
   computed: {
-    paginatedDockingReports() {
-      const startIdx = (this.currentPage - 1) * this.itemsPerPage
-      const endIdx = startIdx + this.itemsPerPage
-      return this.filteredDockingReports.slice(startIdx, endIdx)
+    paginatedShips() {
+      if (this.rowsPerPage === "ALL") {
+        return this.shipArrival
+      }
+      const start = (this.currentPage - 1) * this.rowsPerPage
+      const end = start + this.rowsPerPage
+      return this.shipArrival.slice(start, end)
     },
-
     totalPages() {
-      // return Math.ceil(this.filteredDockingReports.length / this.itemsPerPage)
-    },
-
-    uniqueShipNames() {
-      const uniqueNames = [...new Set(this.dockingReports.map((report) => report.ship_name))]
-
-      this.options = uniqueNames
-
-      // return uniqueNames.map((name) => ({ name }))
+      if (this.rowsPerPage === "ALL") {
+        return 1
+      }
+      return Math.ceil(this.shipArrival.length / this.rowsPerPage)
     }
   },
 
@@ -143,19 +143,24 @@ export default {
 
   methods: {
     async fetchShipArrival() {
-      const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
+      const config = {
+        params: {
+          search: this.searchQuery
+        },
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token")
+        }
+      }
 
-      await axios
-        .get("/api/v1/inspection/", config)
-        .then((res) => {
-          this.shipArrival = res.data.data
+      try {
+        const res = await axios.get("/api/v1/inspection/", config)
+        this.shipArrival = res.data.data
+        this.currentPage = 1
 
-          // console.clear()
-          console.log("💚 SHIP ARRIVAL FETCHED", this.shipArrival)
-        })
-        .catch((error) => {
-          console.error("💥 SHIP ARRIVAL ERROR :", error)
-        })
+        console.log("💚 SHIP ARRIVAL FETCHED", this.shipArrival)
+      } catch (error) {
+        console.error("💥 SHIP ARRIVAL ERROR :", error)
+      }
     },
 
     inspectedSubmit(id) {
@@ -248,7 +253,34 @@ export default {
         })
 
       console.log(id, updatedData)
+    },
+
+    // PAGINATION
+    updatePagination() {
+      this.currentPage = 1
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++
+      }
+    },
+    goToPage(pageNumber) {
+      this.currentPage = pageNumber
     }
+  },
+
+  watch: {
+    rowsPerPage() {
+      this.updatePagination()
+    }
+  },
+  created() {
+    this.fetchShipArrival()
   }
 }
 </script>
