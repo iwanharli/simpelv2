@@ -90,13 +90,13 @@
   </b-row>
 
   <div class="modal fade" id="modalDownload" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header bg-primary">
           <h4 class="modal-title text-white" style="font-weight: bold">Export CSV</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body mb-3" style="height: 500px !important">
+        <div class="modal-body mb-3">
           <div class="col-12 mb-3">
             <label class="form-label" style="font-weight: bolder">PILIH KAPAL </label>(kosongi jika memilih semua)
             <VueMultiselect v-model="selectedShip" :options="this.options" :multiple="true" :clear-on-select="true" placeholder="Pilih Kapal"> </VueMultiselect>

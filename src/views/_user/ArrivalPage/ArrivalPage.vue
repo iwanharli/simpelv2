@@ -114,8 +114,8 @@ export default {
       shipArrival: [],
 
       currentPage: 1,
-      rowsPerPage: 5,
-      rowsOptions: [5, 10, 15, "ALL"],
+      rowsPerPage: 10,
+      rowsOptions: [10, 15, 50, "ALL"],
       searchQuery: ""
     }
   },

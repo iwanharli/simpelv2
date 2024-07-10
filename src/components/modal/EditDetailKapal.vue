@@ -11,6 +11,12 @@
             <div class="modal-body">
               <div class="row">
                 <div class="col mb-4">
+                  <label class="form-label" style="font-weight: bolder">Device ID</label>
+                  <input type="text" id="shipDeviceID" class="form-control"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col mb-4">
                   <label class="form-label" style="font-weight: bolder">Nama Kapal</label>
                   <input type="text" id="shipName" class="form-control" v-model="ship.ship_name" />
                 </div>

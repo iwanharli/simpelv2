@@ -9,7 +9,9 @@
                 <h4 style="font-weight: bold; color: white">DAFTAR PENGGUNA WEB</h4>
               </b-col>
               <b-col xl="3" lg="4" md="5" sm="5" class="d-flex justify-content-end custom-export">
-                <button style="display: inline-block" class="btn btn-warning" type="button" id="kapal_detail" data-bs-toggle="modal" data-bs-target="#modalAddUser"><i class="ti ti-user-plus me-sm-1"></i> TAMBAH USER</button>
+                <button style="display: inline-block" class="btn btn-warning" type="button" id="kapal_detail" data-bs-toggle="modal" data-bs-target="#modalAddUser">
+                  <i class="ti ti-user-plus me-sm-1"></i> TAMBAH USER
+                </button>
               </b-col>
               <b-col xl="12" lg="12" md="12" sm="12" class="mt-3">
                 <input type="text" class="form-control border-0" placeholder="Pencarian (Nama / Role / Email)" v-model="searchQuery" />
@@ -22,12 +24,11 @@
             <table id="basic-table table-border" class="table table-md mb-0" role="grid">
               <thead>
                 <tr class="bg-soft-primary text-primary">
-                  <th style="font-weight: bolder; width: 5px" class="text-center">ID</th>
-                  <th style="width: 5%; font-weight: bolder" class="text-center">🤓</th>
-                  <th style="font-weight: bolder">NAMA</th>
-                  <th style="width: 15%; font-weight: bolder" class="text-center">ROLE</th>
+                  <th class="text-center" style="font-weight: bolder; width: 5px">ID</th>
+                  <th class="text-center" style="width: 3%; font-weight: bolder">NAMA</th>
+                  <th style="font-weight: bolder; padding: 5px 5px 16px 0px">PENGGUNA</th>
                   <th style="width: 15%; font-weight: bolder">EMAIL</th>
-                  <th style="font-weight: bolder" class="text-center">TERDAFTAR</th>
+                  <th class="text-center" style="font-weight: bolder">TERDAFTAR</th>
                   <th style="width: 5%"></th>
                 </tr>
               </thead>
@@ -36,20 +37,20 @@
                   <td class="text-center bg-soft-light">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
-                  <td class="text-center">
-                    <img class="bg-soft-primary rounded img-fluid avatar-30" src="@/assets/images/user2.png" alt="profile" loading="lazy" v-if="item.role === 'superadmin'" />
-                    <img class="bg-soft-primary rounded img-fluid avatar-30" src="@/assets/images/user.png" alt="profile" loading="lazy" v-else />
+                  <td class="text-center p-0">
+                    <img class="bg-soft-primary rounded img-fluid avatar-40" src="@/assets/images/user2.png" alt="profile" loading="lazy" v-if="item.role === 'superadmin'" />
+                    <img class="bg-soft-primary rounded img-fluid avatar-40" src="@/assets/images/user.png" alt="profile" loading="lazy" v-else />
                   </td>
-                  <td style="text-transform: capitalize; font-weight: bolder">{{ item.name }}</td>
-                  <td class="text-center" style="text-transform: uppercase">
-                    <!-- <span class="badge" :class="item.color">{{ item.status }}</span> -->
-                    <span class="badge bg-danger" v-if="item.role === 'superadmin'" style="padding: 5px">{{ item.role }}</span>
-                    <span class="badge bg-info" v-else>{{ item.role }}</span>
+                  <td class="p-0">
+                    <span style="font-weight: bold; text-transform: uppercase">{{ item.name }}</span> <br />
+                    <small>
+                      <span class="badge bg-danger" v-if="item.role === 'superadmin'" style="padding: 5px">{{ item.role }}</span>
+                      <span class="badge bg-info" v-else>{{ item.role }}</span>
+                    </small>
                   </td>
                   <td>
                     {{ item.email }} &nbsp;
                     <span class="badge bg-warning" v-if="item.email_verified_at === ''" style="padding: 5px">unverified</span>
-                    <!-- <small> {{ item.email_verified_at ? item.email_verified_at : "Belum Diverifikasi" }} </small> -->
                   </td>
                   <td class="text-center">{{ item.updated_at }}</td>
                   <td class="text-center bg-soft-primary">
@@ -178,7 +179,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -226,7 +226,7 @@ export default {
         email: "",
         role: "",
         password: ""
-      },
+      }
     }
   },
 

@@ -9,6 +9,10 @@
                 <h4 style="font-weight: bold; color: white">HISTORY LABUH KAPAL</h4>
               </b-col>
               <b-col xl="3" lg="4" md="5" sm="5" class="d-flex justify-content-end custom-export">
+                <select class="form-select" v-model="itemsPerPage" @change="updatePagination" :style="{ width: '100px' }">
+                  <option v-for="option in rowsOptions" :key="option" :value="option">{{ option }}</option>
+                </select>
+                &nbsp;
                 <button style="display: inline-block" class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#modalDownload" @click="uniqueShipNames"><i class="ti ti-download me-sm-1"></i> EXPORT CSV</button>
               </b-col>
               <b-col xl="12" lg="12" md="12" sm="12" class="mt-3">
@@ -92,13 +96,13 @@
   </b-row>
 
   <div class="modal fade" id="modalDownload" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header bg-primary">
           <h4 class="modal-title text-white" style="font-weight: bold">Export CSV</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body mb-3" style="height: 500px !important">
+        <div class="modal-body mb-3">
           <div class="col-12 mb-3">
             <label class="form-label" style="font-weight: bolder">PILIH KAPAL </label>(kosongi jika memilih semua)
             <div>
@@ -159,6 +163,7 @@ export default {
 
       currentPage: 1,
       itemsPerPage: 10,
+      rowsOptions: [10, 15, 50, 100],
       selected: null,
       options: ["Singa", "Gajah"]
     }
@@ -166,33 +171,31 @@ export default {
 
   computed: {
     filteredDockingReports() {
-      this.currentPage = 1
       const searchQuery = this.searchDockingQuery.toLowerCase().trim()
-
       if (this.dockingReports) {
         return this.dockingReports.filter((report) => report.ship_name.toLowerCase().includes(searchQuery))
       } else {
         console.error("💥 dockingReports is null or undefined")
-        return [] // or any default value you prefer when this.dockingReports is null or undefined
+        return []
       }
     },
-
     paginatedDockingReports() {
+      if (this.itemsPerPage === "ALL") {
+        return this.filteredDockingReports
+      }
       const startIdx = (this.currentPage - 1) * this.itemsPerPage
       const endIdx = startIdx + this.itemsPerPage
       return this.filteredDockingReports.slice(startIdx, endIdx)
     },
-
     totalPages() {
+      if (this.itemsPerPage === "ALL") {
+        return 1
+      }
       return Math.ceil(this.filteredDockingReports.length / this.itemsPerPage)
     },
-
     uniqueShipNames() {
       const uniqueNames = [...new Set(this.dockingReports.map((report) => report.ship_name))]
-
       this.options = uniqueNames
-
-      // return uniqueNames.map((name) => ({ name }))
     }
   },
 
@@ -203,18 +206,13 @@ export default {
   methods: {
     async getShipDocking() {
       const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
-
-      await axios
-        .get("/api/v1/report/ship-docking", config)
-        .then((res) => {
-          this.dockingReports = res.data.data
-
-          // console.clear()
-          console.log("💚 LOG DOCKING FETCHED", this.dockingReports)
-        })
-        .catch((error) => {
-          console.error("💥 LOG DOCKING ERROR :", error)
-        })
+      try {
+        const res = await axios.get("/api/v1/report/ship-docking", config)
+        this.dockingReports = res.data.data
+        console.log("💚 LOG DOCKING FETCHED", this.dockingReports)
+      } catch (error) {
+        console.error("💥 LOG DOCKING ERROR :", error)
+      }
     },
 
     validationDownload() {
@@ -356,7 +354,32 @@ export default {
     formatDate(date) {
       const options = { day: "numeric", month: "numeric", year: "numeric" }
       return new Date(date).toLocaleDateString("en-GB", options)
+    },
+
+    updatePagination() {
+      this.currentPage = 1
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++
+      }
+    },
+    goToPage(pageNumber) {
+      this.currentPage = pageNumber
     }
+  },
+  watch: {
+    itemsPerPage() {
+      this.updatePagination()
+    }
+  },
+  mounted() {
+    this.getShipDocking()
   }
 }
 </script>

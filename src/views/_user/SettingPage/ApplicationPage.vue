@@ -6,7 +6,7 @@
           <div class="header-title">
             <b-row>
               <b-col xl="9" lg="9" md="9" sm="9">
-                <h4 style="font-weight: bold; color: white">SETTING APLIKASI</h4>
+                <h4 style="font-weight: bold; color: white">SETTING APLIKASI &nbsp;<small style="font-weight: lighter;">*(untuk android)</small></h4>
               </b-col>
             </b-row>
           </div>

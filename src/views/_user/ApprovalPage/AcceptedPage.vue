@@ -9,6 +9,10 @@
                 <h4 style="font-weight: bold; color: white">PENGAJUAN DISETUJUI</h4>
               </b-col>
               <b-col xl="3" lg="4" md="5" sm="5" class="d-flex justify-content-end custom-export">
+                <select class="form-select" v-model="itemsPerPage" @change="updatePagination" :style="{ width: '100px' }">
+                  <option v-for="option in rowsOptions" :key="option" :value="option">{{ option }}</option>
+                </select>
+                &nbsp;
                 <button style="display: inline-block" class="btn btn-secondary" type="button" id="kapal_detail" @click="downloadCSV"><i class="ti ti-download me-sm-1"></i> EXPORT CSV</button>
               </b-col>
               <b-col xl="12" lg="12" md="12" sm="12" class="mt-3">
@@ -26,7 +30,7 @@
                   <th scope="col" style="font-weight: bolder">NAMA KAPAL</th>
                   <th scope="col" style="font-weight: bolder">PENANGGUNG JAWAB</th>
                   <th scope="col" class="text-center" style="font-weight: bolder; width: 5%">NOMOR HP</th>
-                  <th scope="col" class="text-center" style="font-weight: bolder">TERDAFTAR</th>
+                  <!-- <th scope="col" class="text-center" style="font-weight: bolder">TERDAFTAR</th> -->
                   <th scope="col" style="width: 5%"></th>
                 </tr>
               </thead>
@@ -37,25 +41,25 @@
                 </tr>
 
                 <tr v-for="(item, index) in paginatedApprovedData" :key="index" v-else>
-                  <td class="text-center bg-soft-light" style="font-weight: bolder; ">
+                  <td class="text-center bg-soft-light" style="font-weight: bolder">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
-                  <td style="text-transform: uppercase; font-weight: bolder;" data-label="🚢">
+                  <td style="text-transform: uppercase; font-weight: bolder" data-label="🚢">
                     {{ item.ship_name }}
                   </td>
                   <td data-label="👲">
                     <span style="font-weight: bold; text-transform: uppercase">{{ item.responsible_name }}</span> <br />
-                    <small>{{ item.device_id }}</small>
+                    <small>📱{{ item.device_id }}</small>
                   </td>
-                  <td style="text-transform: uppercase; font-weight: bolder" data-label="📱">
-                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm" target="_blank">
-                      <img src="@/assets/images/whatsapp.png" width="25" height="25" />
+                  <td data-label="📱">
+                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm btn-soft-success" target="_blank" style="display: flex; gap: 10px; align-items: center">
+                      <img src="@/assets/images/whatsapp.png" width="17" height="17" style="display: inline-block" />
+                      <span style="display: inline-block; color: black !important">{{ item.phone }}</span>
                     </a>
-                    {{ item.phone }}
                   </td>
-                  <td class="text-center">
+                  <!-- <td class="text-center">
                     {{ item.created_at }}
-                  </td>
+                  </td> -->
                   <td class="text-center bg-soft-primary">
                     <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalViewDetailApproved" @click="fetchShipAcceptedDetail(item.username)"><i class="ti ti-search me-sm-1"></i> DETAIL</button>
                   </td>
@@ -191,49 +195,62 @@ export default {
       acceptedList: [],
       shipDetail: [],
       historyPairing: [],
-      searchQuery: "",
 
       currentPage: 1,
-      itemsPerPage: 10
+      itemsPerPage: 10,
+      rowsOptions: [10, 15, 50, 100],
+      searchQuery: ""
     }
   },
 
   computed: {
     filteredApprovedData() {
-      this.currentPage = 1
-
       const searchQuery = this.searchQuery.toLowerCase()
       return this.acceptedList.filter((item) => item.status === "approved" && Object.values(item).some((value) => value.toString().toLowerCase().includes(searchQuery)))
     },
     paginatedApprovedData() {
+      if (this.itemsPerPage === "ALL") {
+        return this.filteredApprovedData
+      }
       const startIdx = (this.currentPage - 1) * this.itemsPerPage
       const endIdx = startIdx + this.itemsPerPage
       return this.filteredApprovedData.slice(startIdx, endIdx)
     },
     totalPages() {
+      if (this.itemsPerPage === "ALL") {
+        return 1
+      }
       return Math.ceil(this.filteredApprovedData.length / this.itemsPerPage)
     }
-  },
-
-  mounted() {
-    console.clear()
-    this.fetchShipAccepted()
   },
 
   methods: {
     async fetchShipAccepted() {
       const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
 
-      await axios
-        .get("/api/v1/ship/pairing-request", config)
-        .then((response) => {
-          this.acceptedList = response.data.data
-
-          console.log("💚 ACCEPTED FETCHED", this.acceptedList)
-        })
-        .catch((error) => {
-          console.error("💥 ACCEPTED ERROR :" + error)
-        })
+      try {
+        const response = await axios.get("/api/v1/ship/pairing-request", config)
+        this.acceptedList = response.data.data
+        console.log("💚 ACCEPTED FETCHED", this.acceptedList)
+      } catch (error) {
+        console.error("💥 ACCEPTED ERROR :", error)
+      }
+    },
+    updatePagination() {
+      this.currentPage = 1
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++
+      }
+    },
+    goToPage(pageNumber) {
+      this.currentPage = pageNumber
     },
 
     async fetchShipAcceptedDetail(username) {
@@ -327,6 +344,16 @@ export default {
         })
       }
     }
+  },
+
+  watch: {
+    itemsPerPage() {
+      this.updatePagination()
+    }
+  },
+  mounted() {
+    console.clear()
+    this.fetchShipAccepted()
   }
 }
 </script>

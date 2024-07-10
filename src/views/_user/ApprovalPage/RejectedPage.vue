@@ -44,13 +44,16 @@
                   </td>
                   <td data-label="👲">
                     <span style="font-weight: bold; text-transform: uppercase">{{ item.responsible_name }}</span> <br />
-                    <small>{{ item.device_id }}</small>
+                    <small>📱{{ item.device_id }}</small>
                   </td>
                   <td class="text-center">
                     {{ item.created_at }}
                   </td>
-                  <td class="text-center bg-soft-primary">
-                    <a :href="getWhatsAppLink(item.phone)" class="btn btn-sm btn-success text-center p-2" style="width: 100%" type="button" target="_blank"> <img src="@/assets/images/whatsapp.png" width="20" height="20" /> &nbsp; {{ item.phone }} </a>
+                  <td class="text-center bg-soft-light">
+                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm btn-soft-success" target="_blank" style="display: flex; gap: 10px; align-items: center">
+                      <img src="@/assets/images/whatsapp.png" width="17" height="17" style="display: inline-block" />
+                      <span style="display: inline-block; color: black !important">{{ item.phone }}</span>
+                    </a>
                   </td>
                 </tr>
               </tbody>

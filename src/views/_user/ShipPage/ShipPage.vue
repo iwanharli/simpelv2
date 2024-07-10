@@ -4,21 +4,20 @@
       <b-col xl="12" lg="12" md="12" sm="12" class="bg-primary mb-3 p-4" style="border-radius: 20px; border: 2px solid white" data-aos="fade-down" data-aos-delay="110">
         <div class="header-title">
           <b-row>
-            <b-col xl="3" lg="8" md="7" sm="7">
+            <b-col xl="3" lg="4" md="4" sm="7">
               <h4 style="font-weight: bold; color: white">KAPAL TERDAFTAR</h4>
             </b-col>
-            <b-col>
+            <b-col> </b-col>
+            <b-col xl="5" lg="8" md="8" sm="5" class="d-flex justify-content-end custom-export">
               <select class="form-select" v-model="rowsPerPage" @change="fetchData" :style="{ width: '100px' }">
                 <option v-for="option in rowsOptions" :key="option" :value="option">{{ option }}</option>
               </select>
-            </b-col>
-            <b-col> </b-col>
-            <b-col xl="4" lg="4" md="5" sm="5" class="d-flex justify-content-end custom-export">
-              <button style="display: inline-block" class="btn btn-warning" type="button" id="kapal_detail" data-bs-toggle="modal" data-bs-target="#modalAddUser"><i class="ti ti-user-plus me-sm-1"></i> TAMBAH KAPAL</button> &nbsp; &nbsp;
+              &nbsp; &nbsp; <button style="display: inline-block" class="btn btn-warning" type="button" id="kapal_detail" data-bs-toggle="modal" data-bs-target="#modalAddShip">
+                <i class="ti ti-plus me-sm-1"></i> REGISTER KAPAL</button> &nbsp;
               <button style="display: inline-block" class="btn btn-secondary" type="button" id="kapal_detail" @click="downloadCSV"><i class="ti ti-download me-sm-1"></i> EXPORT CSV</button>
             </b-col>
             <b-col xl="12" lg="12" md="12" sm="12" class="mt-3">
-              <input type="text" class="form-control border-0" placeholder="Pencarian (Nama Kapal / Device ID)" v-model="searchQuery" @keyup.enter="fetchData"/>
+              <input type="text" class="form-control border-0" placeholder="Pencarian (Nama Kapal / Device ID)" v-model="searchQuery" @keyup.enter="fetchData" />
             </b-col>
           </b-row>
         </div>
@@ -75,6 +74,48 @@
         </b-col>
       </b-col>
     </b-row>
+
+    <div class="modal fade" id="modalAddShip" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header bg-primary">
+            <h4 class="modal-title text-white" style="font-weight: bold">TAMBAH KAPAL</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label class="form-label" for="validationDefault01">IMEI</label>
+                <input type="text" class="form-control" v-model="inputName" required="" />
+              </div>
+              <div class="col-12 mb-3">
+                <label class="form-label" for="validationDefault01">Nama Kapal</label>
+                <input type="text" class="form-control"/>
+              </div>
+              <div class="col-12 mb-3">
+                <label class="form-label" for="validationDefault01">Nama Penanggung Jawab</label>
+                <input type="text" class="form-control"/>
+              </div>
+              <div class="col-12 mb-3">
+                <label class="form-label" for="validationDefault01">Nama WA</label>
+                <input type="text" class="form-control"/>
+              </div>
+              <div class="col-12 mb-3">
+                <label class="form-label" for="validationDefault01">Pelabuhan</label>
+                <select class="form-select" v-model="inputRole">
+                  <option value="pb1">PB1</option>
+                  <option value="pb2">PB2</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer mt-4">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="validationAddUser()">Tambah</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -116,7 +157,7 @@ export default {
       rowsPerPage: 12,
       rowsOptions: [12, 24, 48, "ALL"],
       disableNext: false,
-      searchQuery: ''
+      searchQuery: ""
     }
   },
 
@@ -145,9 +186,9 @@ export default {
         this.ships = response.data.data
         this.disableNext = false
 
-        console.log(this.ships)
+        console.log("💚 SHIP FETCHED", this.ships)
       } catch (error) {
-        console.error("Error fetching data:", error)
+        console.error("💥 SHIP ERROR :", error)
       }
     },
     prevPage() {

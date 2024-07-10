@@ -31,7 +31,9 @@
                     <input type="checkbox" @change="selectAllRows" v-model="selectAll" />
                   </th>
                   <th scope="col" style="width: 5%">
-                    <button @click="performBulkACC" class="btn btn-sm btn-primary waves-effect waves-light" type="button" :disabled="selectedPending.length === 0"><i class="ti ti-checks me-xs-1"></i> &nbsp; BULK ACC</button>
+                    <button @click="performBulkACC" class="btn btn-sm btn-primary waves-effect waves-light" type="button" :disabled="selectedPending.length === 0" style="width: 100%;">
+                      <i class="ti ti-checks me-xs-1"></i> &nbsp; BULK ACC
+                    </button>
                   </th>
                 </tr>
               </thead>
@@ -49,13 +51,13 @@
                   </td>
                   <td data-label="👲">
                     <span style="font-weight: bold; text-transform: uppercase">{{ item.responsible_name }}</span> <br />
-                    <small>{{ item.device_id }}</small>
+                    <small>📱{{ item.device_id }}</small>
                   </td>
-                  <td style="text-transform: uppercase; font-weight: bolder" data-label="📱">
-                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm" target="_blank">
-                      <img src="@/assets/images/whatsapp.png" width="25" height="25" />
+                  <td data-label="📱">
+                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm btn-soft-success" target="_blank" style="display: flex; gap: 10px; align-items: center">
+                      <img src="@/assets/images/whatsapp.png" width="17" height="17" style="display: inline-block" />
+                      <span style="display: inline-block; color: black !important">{{ item.phone }}</span>
                     </a>
-                    {{ item.phone }}
                   </td>
                   <td class="text-center">
                     {{ item.created_at }}
@@ -64,9 +66,13 @@
                     <input type="checkbox" v-model="selectedPending" :value="item" />
                   </td>
                   <td class="text-center bg-soft-primary">
-                    <a @click="pendingApproveSubmit(item.id)" class="btn btn-md btn-success waves-effect waves-light" type="button"> <i class="ti ti-checks me-xs-1"></i> &nbsp; ACC </a>
+                    <a @click="pendingApproveSubmit(item.id)" class="btn btn-md btn-success waves-effect waves-light" type="button">
+                      <i class="ti ti-checks me-xs-1"></i>
+                    </a>
                     &nbsp;
-                    <a @click="pendingDeclineSubmit(item.id)" class="btn btn-md btn-danger waves-effect waves-light" type="button"> <i class="ti ti-ban me-xs-1"></i> &nbsp; TOLAK </a>
+                    <a @click="pendingDeclineSubmit(item.id)" class="btn btn-md btn-danger waves-effect waves-light" type="button">
+                      <i class="ti ti-ban me-xs-1"></i>
+                    </a>
                   </td>
                 </tr>
               </tbody>
