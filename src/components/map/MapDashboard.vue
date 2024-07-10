@@ -9,7 +9,7 @@
     </a>
 
     <div id="shipArrival" :class="['simpel-ship-arrival', 'inspeksi-mobile', 'bg-soft-light', muncul ? 'show' : '']">
-      <button v-on:click="toggleArrival()" id="insideArrivalBtn">CLOSE</button>
+      <button v-on:click="toggleArrival()" id="insideArrivalBtn">X</button>
       <b-card-header class="bg-secondary text-light pb-4">
         <div class="header-title">
           <b-row>

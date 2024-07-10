@@ -48,10 +48,10 @@ body.dark .bg-solid-light {
 
 #insideArrivalBtn {
   position: absolute;
-  width: 40px;
+  width: 60px;
   height: 86px !important;
   top: 0;
-  left: -40px;
+  left: -60px;
   background: #C03221;
   color: #fff !important;
   border: 0px !important;
@@ -59,6 +59,8 @@ body.dark .bg-solid-light {
   border-radius: 10px 0 0 10px;
   text-orientation: upright;
   writing-mode: vertical-lr;
+  font-weight: bolder;
+  font-size: 20px;
 }
 
 .inspeksi-mobile {

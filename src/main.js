@@ -41,10 +41,12 @@ app.component('counter-up', CounterUp)
 app.component('font-awesome-icon', FontAwesomeIcon)
 // app.component('Select2', Select2)
 
+
 // Custom Components & Directives
 app.use(globalComponent)
 app.use(globalDirective)
 app.mixin(globalMixin)
+
 
 app.mount('#app')
 

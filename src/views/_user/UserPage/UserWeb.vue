@@ -178,12 +178,14 @@
       </div>
     </div>
   </div>
+
 </template>
+
 <script>
 import axios from "axios"
 import Swal from "sweetalert2"
 import AOS from "aos"
-import { onMounted, ref } from "vue"
+import { onMounted } from "vue"
 
 import "@/assets/custom-vue/css/pagination.css"
 
@@ -201,6 +203,7 @@ export default {
       })
     })
   },
+
   data() {
     return {
       showPassword: false,
@@ -223,7 +226,7 @@ export default {
         email: "",
         role: "",
         password: ""
-      }
+      },
     }
   },
 
@@ -384,7 +387,7 @@ export default {
       this.user.name = item.name
       this.user.email = item.email
       this.user.role = item.role
-      // this.user.password = item.password
+      this.user.password = item.password
     },
 
     async submitEdit() {

@@ -26,7 +26,7 @@
               <table class="table" style="padding: 10px 1.5rem !important">
                 <tbody class="text-black">
                   <tr>
-                    <th style="width: 5px%"><i class="ti ti-ship"></i></th>
+                    <th style="width: 5px;"><i class="ti ti-ship"></i></th>
                     <th style="width: 40%; font-weight: bolder">NAMA KAPAL</th>
                     <td>
                       {{ formatShipStatus(ship.ship_name) }}

@@ -8,7 +8,9 @@ import router from './router'
 // DEV BE   http://103.139.192.254:9016
 // PROD BE  http://103.179.86.243:9016
 
-axios.defaults.baseURL = 'http://103.179.86.243:9016';
+// BARU 103.179.86.246
+
+axios.defaults.baseURL = 'http://103.179.86.246:9016';
 axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
 
 const publicPath = process.env.BASE_URL
