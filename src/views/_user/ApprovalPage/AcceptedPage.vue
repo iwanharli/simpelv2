@@ -205,6 +205,9 @@ export default {
 
   computed: {
     filteredApprovedData() {
+      if (!this.acceptedList) {
+        return []
+      }
       const searchQuery = this.searchQuery.toLowerCase()
       return this.acceptedList.filter((item) => item.status === "approved" && Object.values(item).some((value) => value.toString().toLowerCase().includes(searchQuery)))
     },

@@ -98,10 +98,16 @@ const userRoutes = (prefix) => [
     component: () => import('@/views/_user/SettingPage/ApplicationPage.vue')
   },
   {
-    path: 'setting/geofence',
-    name: prefix + '.setting-geofence',
+    path: 'setting/geofence/919191',
+    name: prefix + '.setting-geofence-tegalsari',
     meta: { auth: true, name: 'SettingPage', isBanner: false },
     component: () => import('@/views/_user/SettingPage/GeofencePage.vue')
+  },
+  {
+    path: 'setting/geofence/929292',
+    name: prefix + '.setting-geofence-nizamZachman',
+    meta: { auth: true, name: 'SettingPage', isBanner: false },
+    component: () => import('@/views/_user/SettingPage/GeofencePage_nizam.vue')
   },
 
   // USER 

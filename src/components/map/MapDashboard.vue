@@ -88,7 +88,8 @@ export default {
   data() {
     return {
       stats: [],
-      center: { lat: -6.846155, lng: 109.128892 },
+      // center: { lat: -6.846155, lng: 109.128892 }, 
+      center: { lat: -6.097643, lng: 106.802428 }, 
       shipArrival: [],
 
       leaflet_map: null,
@@ -106,7 +107,7 @@ export default {
 
       token: localStorage.getItem("token"),
       // ws_url: `ws://103.179.86.243:9016/api/v1/dashboard/ship-monitor/websocket?Authorization=Bearer ${token}`
-      ws_url: `ws://103.179.86.243:9016/api/v1/dashboard/ship-monitor/open-websocket`
+      ws_url: `ws://103.179.86.246:9016/api/v1/dashboard/ship-monitor/open-websocket`
     }
   },
 
@@ -118,7 +119,7 @@ export default {
 
     this.getShipDocking()
 
-    console.log("aa", localStorage.getItem("token"))
+    console.log("MAP DASHBOARD > token", localStorage.getItem("token"))
   },
 
   unmounted() {

@@ -41,7 +41,8 @@
       <side-menu title="PENGATURAN" icon="setting" :caret-icon="true" :route="{ popup: 'false', to: 'setting' }" @onClick="toggle" :active="currentRoute.includes('setting')" style="font-weight: bolder" v-if="userRole === 'superadmin'">
         <b-collapse tag="ul" class="sub-nav" id="setting" accordion="sidebar-menu" :visible="currentRoute.includes('setting')">
           <side-menu isTag="router-link" title="Perangkat" icon="circle" :icon-size="10" icon-type="solid" miniTitle="L" :route="{ to: 'admin.setting-application' }"></side-menu>
-          <side-menu isTag="router-link" title="Map Geofencing" icon="circle" :icon-size="10" icon-type="solid" miniTitle="R" :route="{ to: 'admin.setting-geofence' }"></side-menu>
+          <side-menu isTag="router-link" title="Map Geofence" icon="circle" :icon-size="10" icon-type="solid" miniTitle="R" :route="{ to: 'admin.setting-geofence-nizamZachman' }"></side-menu>
+          <!-- <side-menu isTag="router-link" title="Map Nizam Zachman" icon="circle" :icon-size="10" icon-type="solid" miniTitle="N" :route="{ to: 'admin.setting-geofence-nizamZachman' }"></side-menu> -->
         </b-collapse>
       </side-menu>
 

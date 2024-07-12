@@ -35,7 +35,7 @@
               </thead>
               <tbody>
                 <!-- Check if pendingList has data -->
-                <tr v-if="!paginatedShips">
+                <tr v-if="paginatedShips.length === 0">
                   <td colspan="6" class="bg-soft-white">Data kosong</td>
                 </tr>
 
@@ -122,17 +122,29 @@ export default {
 
   computed: {
     paginatedShips() {
+      // jika null
+      if (!this.shipArrival) {
+        return []
+      }
+
       if (this.rowsPerPage === "ALL") {
         return this.shipArrival
       }
       const start = (this.currentPage - 1) * this.rowsPerPage
       const end = start + this.rowsPerPage
+
       return this.shipArrival.slice(start, end)
     },
+
     totalPages() {
+      if (!this.shipArrival) {
+        return 1
+      }
+
       if (this.rowsPerPage === "ALL") {
         return 1
       }
+
       return Math.ceil(this.shipArrival.length / this.rowsPerPage)
     }
   },

@@ -35,7 +35,7 @@
 
         <div v-if="isDashboardChartVisible" class="bg-soft-light position-fixed top-0 start-50 translate-middle-x d-flex align-items-center scrollbar" style="z-index: 550; border-radius: 20px; margin-top: 160px"></div>
 
-        <button @click="toggleDashboardChart" class="btn btn-primary position-absolute bottom-0 start-0 mb-3" data-bs-toggle="modal" data-bs-target="#modalStatistics" style="z-index: 500; border-radius: 30px; border: 5px solid rgb(235, 174, 21); padding: 20px; font-weight: bolder; margin-left: 20px">Lihat Statistik</button>
+        <button @click="toggleDashboardChart" class="btn btn-primary position-absolute bottom-0 start-0 mb-3" data-bs-toggle="modal" data-bs-target="#modalStatistics" style="z-index: 500; border-radius: 30px; border: 5px solid white; padding: 20px; font-weight: bolder; margin-left: 20px">Lihat Statistik</button>
       </div>
     </b-card>
   </div>

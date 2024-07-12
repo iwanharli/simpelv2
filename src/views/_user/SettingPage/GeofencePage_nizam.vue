@@ -64,40 +64,12 @@ export default {
     async initializeMap() {
       this.fixGeofence = this.appGeofence.map((item) => [parseFloat(item.lat), parseFloat(item.long)])
 
-      // console.log(this.fixGeofence)
-
-      // STATIC VALUE TEGALSARI
-      // this.fixGeofence = [
-      //   { lat: "-6.84803", long: "109.127111" },
-      //   { lat: "-6.84493", long: "109.127213" },
-      //   { lat: "-6.844399", long: "109.127412" },
-      //   { lat: "-6.843839", long: "109.127916" },
-      //   { lat: "-6.843522", long: "109.128222" },
-      //   { lat: "-6.843405", long: "109.128479" },
-      //   { lat: "-6.843397", long: "109.128805" },
-      //   { lat: "-6.843378", long: "109.129482" },
-      //   { lat: "-6.843815", long: "109.130108" },
-      //   { lat: "-6.844419", long: "109.130499" },
-      //   { lat: "-6.845571", long: "109.130567" },
-      //   { lat: "-6.848934", long: "109.130598" },
-      //   { lat: "-6.849089", long: "109.130019" },
-      //   { lat: "-6.850875", long: "109.129794" },
-      //   { lat: "-6.851462", long: "109.129584" },
-      //   { lat: "-6.851276", long: "109.127807" },
-      //   { lat: "-6.850367", long: "109.127907" },
-      //   { lat: "-6.850528", long: "109.12923" },
-      //   { lat: "-6.849406", long: "109.129368" },
-      //   { lat: "-6.849238", long: "109.12804" },
-      //   { lat: "-6.848195", long: "109.12814" },
-      //   { lat: "-6.848085", long: "109.127142" }
-      // ]
-
       this.fixGeofence.forEach((coordinate, index) => {
-        const { lat, long } = coordinate
-        // console.log(`Index: ${index}, Lat: ${lat}, Long: ${long}`)
+        const [latitude, longitude] = coordinate
+        // console.log(`Index: ${index}, Lat: ${latitude}, Long: ${longitude}`)
       })
 
-      const latlng = [-6.847556, 109.128828]
+      const latlng = [-6.097643, 106.802428]
       const tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxNativeZoom: 19,
         maxZoom: 30,
@@ -237,7 +209,7 @@ export default {
     },
 
     async getSettingApp() {
-      axios
+      await axios
         .get("api/v1/setting/web", {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token")
@@ -266,35 +238,25 @@ export default {
 
     async resetSetting() {
       // INITIAL
-      this.harbourCode = 919191
-      this.harbourName = "PELABUHAN TEGALSARI"
+      this.harbourCode = 929292
+      this.harbourName = "PELABUHAN NIZAM ZACHMAN"
       this.appMode = "interval"
       this.appInterval = 30
       this.appRange = 2
       this.adminContact = "081802796414"
       const coordinate = [
-        { long: "109.127111", lat: "-6.84803" },
-        { long: "109.127213", lat: "-6.84493" },
-        { long: "109.127412", lat: "-6.844399" },
-        { long: "109.127916", lat: "-6.843839" },
-        { long: "109.128222", lat: "-6.843522" },
-        { long: "109.128479", lat: "-6.843405" },
-        { long: "109.128805", lat: "-6.843397" },
-        { long: "109.129482", lat: "-6.843378" },
-        { long: "109.130108", lat: "-6.843815" },
-        { long: "109.130499", lat: "-6.844419" },
-        { long: "109.130567", lat: "-6.845571" },
-        { long: "109.130598", lat: "-6.848934" },
-        { long: "109.130019", lat: "-6.849089" },
-        { long: "109.129794", lat: "-6.850875" },
-        { long: "109.129584", lat: "-6.851462" },
-        { long: "109.127807", lat: "-6.851276" },
-        { long: "109.127907", lat: "-6.850367" },
-        { long: "109.12923", lat: "-6.850528" },
-        { long: "109.129368", lat: "-6.849406" },
-        { long: "109.12804", lat: "-6.849238" },
-        { long: "109.12814", lat: "-6.848195" },
-        { long: "109.127142", lat: "-6.848085" }
+        { long: "106.803055", lat: "-6.094595" },
+        { long: "106.804399", lat: "-6.101957" },
+        { long: "106.802454", lat: "-6.102295" },
+        { long: "106.802025", lat: "-6.099767" },
+        { long: "106.800907", lat: "-6.099951" },
+        { long: "106.800569", lat: "-6.097961" },
+        { long: "106.801896", lat: "-6.097703" },
+        { long: "106.801929", lat: "-6.097895" },
+        { long: "106.802052", lat: "-6.097873" },
+        { long: "106.802001", lat: "-6.097521" },
+        { long: "106.800557", lat: "-6.097757" },
+        { long: "106.800005", lat: "-6.094734" }
       ]
 
       // UPDATING

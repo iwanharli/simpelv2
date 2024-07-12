@@ -12,8 +12,7 @@
               <select class="form-select" v-model="rowsPerPage" @change="fetchData" :style="{ width: '100px' }">
                 <option v-for="option in rowsOptions" :key="option" :value="option">{{ option }}</option>
               </select>
-              &nbsp; &nbsp; <button style="display: inline-block" class="btn btn-warning" type="button" id="kapal_detail" data-bs-toggle="modal" data-bs-target="#modalAddShip">
-                <i class="ti ti-plus me-sm-1"></i> REGISTER KAPAL</button> &nbsp;
+              &nbsp; &nbsp; <button style="display: inline-block" class="btn btn-warning" type="button" id="kapal_detail" data-bs-toggle="modal" data-bs-target="#modalAddShip"><i class="ti ti-plus me-sm-1"></i> REGISTER KAPAL</button> &nbsp;
               <button style="display: inline-block" class="btn btn-secondary" type="button" id="kapal_detail" @click="downloadCSV"><i class="ti ti-download me-sm-1"></i> EXPORT CSV</button>
             </b-col>
             <b-col xl="12" lg="12" md="12" sm="12" class="mt-3">
@@ -24,7 +23,15 @@
       </b-col>
     </b-row>
 
-    <b-row>
+    <b-row v-if="!ships" class="justify-content-center align-items-center" style="height: 20vh; margin-bottom: 30px">
+      <b-col class="d-flex justify-content-center align-items-center">
+        <div class="ag-courses_box bg-secondary d-flex justify-content-center align-items-center" style="padding: 100px; border-radius: 20px; margin-bottom: 20px; text-align: center; font-weight: bolder; width: 70%">
+          <h3 style="color: #fff; margin: 0">DATA KAPAL KOSONG</h3>
+        </div>
+      </b-col>
+    </b-row>
+
+    <b-row v-else>
       <b-col class="p-5 pt-0 pb-0">
         <div class="ag-courses_box">
           <div class="ag-courses_item" v-for="(item, index) in ships" :key="index" style="border: 3px solid white">
@@ -86,31 +93,31 @@
             <div class="row">
               <div class="col-12 mb-3">
                 <label class="form-label" for="validationDefault01">IMEI</label>
-                <input type="text" class="form-control" v-model="inputName" required="" />
+                <input type="text" class="form-control" id="deviceId" v-model="form.device_id" required="" />
               </div>
               <div class="col-12 mb-3">
                 <label class="form-label" for="validationDefault01">Nama Kapal</label>
-                <input type="text" class="form-control"/>
+                <input type="text" class="form-control" id="shipName" v-model="form.ship_name" required="" />
               </div>
               <div class="col-12 mb-3">
                 <label class="form-label" for="validationDefault01">Nama Penanggung Jawab</label>
-                <input type="text" class="form-control"/>
+                <input type="text" class="form-control" id="responsibleName" v-model="form.responsible_name" required="" />
               </div>
               <div class="col-12 mb-3">
-                <label class="form-label" for="validationDefault01">Nama WA</label>
-                <input type="text" class="form-control"/>
+                <label class="form-label" for="validationDefault01">Nomor WA</label>
+                <input type="text" class="form-control" id="phone" v-model="form.phone" required="" />
               </div>
               <div class="col-12 mb-3">
                 <label class="form-label" for="validationDefault01">Pelabuhan</label>
-                <select class="form-select" v-model="inputRole">
-                  <option value="pb1">PB1</option>
-                  <option value="pb2">PB2</option>
+                <select class="form-select" id="harbourCode" v-model="form.harbour_code" required="">
+                  <option :value="919191">TEGALSARI</option>
+                  <option :value="929292">NIZAM ZACHMAN</option>
                 </select>
               </div>
             </div>
           </div>
           <div class="modal-footer mt-4">
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="validationAddUser()">Tambah</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="validationAddShip()">Tambah</button>
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
           </div>
         </div>
@@ -153,6 +160,18 @@ export default {
     return {
       ships: [],
 
+      form: {
+        harbour_code: 929292,
+        ship_name: "",
+        phone: "00000000",
+        responsible_name: "",
+        device_id: "",
+        firebase_token: "eUkTp9wXRWeF-HF_P0-FMG:APA91bH1VVTX1aLmVNzSCN9IiXuWwXubN1EYJjCkRS4nZ-206o3O0uWFGiw8fhMOFhkMVJmYQAq0xEfzdkzZQ1AXq-xkpM84xT5gQ7HWZTWGK4XWAnbjoyDZLPQNK2nsmpnpZagBlJhn",
+        username: "wildan",
+        password: "wildan",
+        type: 2 // Default 2
+      },
+
       page: 1,
       rowsPerPage: 12,
       rowsOptions: [12, 24, 48, "ALL"],
@@ -191,6 +210,45 @@ export default {
         console.error("💥 SHIP ERROR :", error)
       }
     },
+
+    async validationAddShip() {
+      // cek input
+
+      this.addShip()
+    },
+
+    async addShip() {
+      this.form.username = this.form.phone
+      this.form.password = this.form.phone
+
+      const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
+
+      const addData = {
+        harbour_code: this.form.harbour_code,
+        ship_name: this.form.ship_name,
+        phone: this.form.phone,
+        responsible_name: this.form.responsible_name,
+        device_id: this.form.device_id,
+        firebase_token: this.form.firebase_token,
+        username: this.form.username,
+        password: this.form.password,
+        type: this.form.type
+      }
+
+      try {
+        const response = await axios.post("http://103.179.86.246:9016/api/v1/ship/pairing", this.form, config)
+        console.log("API Response:", response.data)
+      } catch (error) {
+        console.error("Error submitting form:", error.response.data.meta.message)
+
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.response.data.meta.message,
+        })
+      }
+    },
+
     prevPage() {
       if (this.page > 1) {
         this.page--
@@ -202,12 +260,14 @@ export default {
       this.fetchData("next")
     }
   },
+
   watch: {
     rowsPerPage() {
       this.page = 1
       this.fetchData()
     }
   },
+
   created() {
     this.fetchData()
   }
