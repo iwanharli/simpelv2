@@ -1,9 +1,9 @@
 <template>
   <!-- <loader-component :show="isLoader"></loader-component> -->
-  
+
   <sidebar-component></sidebar-component>
 
-  <main class="main-content">
+  <main class="main-content" style="background: transparent !important;">
     <div :class="`position-relative  ${isBanner ? 'iq-banner ' + bannerStyle : ''}`">
       <header-component></header-component>
       <template v-if="isBanner">
@@ -47,5 +47,3 @@ const isLoader = ref(true)
 //   }, 300)
 // })
 </script>
-
-<style></style>

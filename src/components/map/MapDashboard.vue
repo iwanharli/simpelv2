@@ -1,6 +1,6 @@
 <template>
   <div id="map" class="simpel-map-container">
-    <div id="map" style="z-index: 0px !important"></div>
+    <div id="mapDashboard" style="z-index: 0px !important"></div>
 
     <div id="shipDetailsDiv" class="simpel-ship-detail"></div>
 
@@ -76,393 +76,220 @@
 <script>
 import L from "leaflet"
 import axios from "axios"
+import AOS from "aos"
 import Swal from "sweetalert2"
-import "leaflet/dist/leaflet.css"
 import "leaflet.markercluster"
+import "leaflet/dist/leaflet.css"
+
+import { onMounted } from "vue"
 
 import markerKapal from "@/assets/images/ship-marker.png"
 import markerNelayan from "@/assets/images/fisherman-marker.png"
 
 export default {
   name: "MapDashboard",
+  setup() {
+    onMounted(() => {
+      AOS.init({
+        disable: function () {
+          var maxWidth = 996
+          return window.innerWidth < maxWidth
+        },
+        once: true,
+        duration: 800
+      })
+    })
+  },
+
   data() {
     return {
       stats: [],
-      // center: { lat: -6.846155, lng: 109.128892 }, 
-      center: { lat: -6.097643, lng: 106.802428 }, 
+      center: { lat: -6.097643, lng: 106.802428 },
       shipArrival: [],
-
       leaflet_map: null,
-      leaflet_markers: [],
+      leaflet_markers: {},
       leaflet_layerGroups: null,
       harbour_name: "PELABUHAN",
-
       socket: null,
       harbour_geo: [],
       selectedShip: [],
       ship_collection: [],
       muncul: false,
-      // ws_url: "ws://localhost:8080",
-      // ws_url: "ws://103.179.86.243:9016/api/v1/dashboard/ship-monitor/open-websocket"
-
       token: localStorage.getItem("token"),
-      // ws_url: `ws://103.179.86.243:9016/api/v1/dashboard/ship-monitor/websocket?Authorization=Bearer ${token}`
       ws_url: `ws://103.179.86.246:9016/api/v1/dashboard/ship-monitor/open-websocket`
     }
   },
 
   mounted() {
-    setTimeout(() => {
-      this.akuPeta()
-      this.ws_container()
-    }, 10)
-
-    this.getShipDocking()
-
-    console.log("MAP DASHBOARD > token", localStorage.getItem("token"))
+    this.initializeMap()
+    this.initializeWebSocket()
+    this.fetchShipDocking()
   },
 
   unmounted() {
-    console.log("tutup")
-    this.socket.close()
+    if (this.socket) this.socket.close()
   },
 
   methods: {
     toggleArrival() {
       this.muncul = !this.muncul
-      console.clear()
-      console.log("muncul ??", this.muncul)
     },
 
     /*****************/
-    async getShipDocking() {
-      const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
-
-      await axios
-        .get("/api/v1/dashboard/lastest-dock-ship", config)
-        .then((res) => {
-          this.shipArrival = res.data.data
-
-          // console.clear()
-          console.log("💚 SHIP ARRIVAL FETCHED", this.shipArrival)
-        })
-        .catch((error) => {
-          console.error("💥 SHIP ARRIVAL ERROR :", error)
-        })
+    async fetchShipDocking() {
+      try {
+        const config = { headers: { Authorization: `Bearer ${this.token}` } }
+        const res = await axios.get("/api/v1/dashboard/lastest-dock-ship", config)
+        this.shipArrival = res.data.data
+      } catch (error) {
+        console.error("Error fetching ship arrival data:", error)
+      }
     },
 
-    async akuPeta() {
-      // console.log("PETA", L, [this.center.lat, this.center.lng])
+    async initializeMap() {
+      await this.fixMapZoomAnimation()
+      const tileUrls = {
+        street: "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ufCf3dbMdr7VkfVI6gjQ"
+      }
 
-      await this.mapZoomAnimFix()
+      this.leaflet_map = L.map("map", { zoomControl: false }).setView([this.center.lat, this.center.lng], 15)
 
-      const tileOcean = "https://api.maptiler.com/maps/ocean/{z}/{x}/{y}.png?key=ufCf3dbMdr7VkfVI6gjQ"
-      const tileTopo = "https://api.maptiler.com/maps/topo-v2/256/{z}/{x}/{y}.png?key=ufCf3dbMdr7VkfVI6gjQ"
-      const street = "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ufCf3dbMdr7VkfVI6gjQ"
-
-      this.leaflet_map = await L.map("map", {
-        zoomControl: false
-      }).setView([this.center.lat, this.center.lng], 13)
-
-      L.tileLayer(street, {
+      L.tileLayer(tileUrls.street, {
         maxNativeZoom: 19,
         maxZoom: 30,
         minZoom: 12,
         noWrap: true
-        // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(this.leaflet_map)
 
-      L.control
-        .zoom({
-          position: "topleft"
-        })
-        .addTo(this.leaflet_map)
+      L.control.zoom({ position: "topleft" }).addTo(this.leaflet_map)
 
-      // L.marker([this.center.lat, this.center.lng])
-      //   .addTo(this.leaflet_map)
-      //   .bindPopup(this.harbour_name)
-      //   .openPopup()
-
-      // this.leaflet_layerGroups = L.layerGroup().addTo(this.leaflet_map)
       this.leaflet_layerGroups = L.markerClusterGroup().addTo(this.leaflet_map)
 
-      this.getAppSetting()
+      this.fetchAppSettings()
     },
 
-    async harbourEditor(geofence) {
-      console.log("---------------------------------")
-      console.log("💚 GEOFENCE SET")
-      var fix_geofence
-      if (geofence !== null && Array.isArray(geofence)) {
-        fix_geofence = geofence.map((item) => [item.lat, item.long])
-      } else {
-        fix_geofence = [] // or any other default value that fits your use case
-      }
-
-      L.polygon(fix_geofence, {
-        color: "#7367F0",
-        fillColor: "#A1B4FF",
-        fillOpacity: 0.5
-      }).addTo(this.leaflet_map)
-    },
-
-    async markerEditor(ship) {
+    async fetchAppSettings() {
       try {
-        if (this.leaflet_markers.hasOwnProperty(ship.ship_id)) {
-          // Jika marker sudah ada, perbarui posisinya
-          this.leaflet_markers[ship?.ship_id].setLatLng([ship?.geo[1], ship?.geo[0]])
+        const config = { headers: { Authorization: `Bearer ${this.token}` } }
+        const res = await axios.get("api/v1/setting/web", config)
+        this.harbour_name = res.data.data.harbour_name
+        this.harbour_geo = res.data.data.geofences
+        this.drawHarbourGeofence()
+      } catch (error) {
+        console.error("Error fetching app settings:", error)
+      }
+    },
 
-          console.log("> UP MARKER \t", ship.ship_id, "🚥", ship.ship_name, "🚥", ship.device_id, "🚥", ship.geo, "\n> ON GROUND \t", ship.on_ground, "\n> IS UPDATE \t", ship.is_update)
+    drawHarbourGeofence() {
+      if (Array.isArray(this.harbour_geo)) {
+        const geofenceCoords = this.harbour_geo.map((item) => [item.lat, item.long])
+        L.polygon(geofenceCoords, {
+          color: "#7367F0",
+          fillColor: "#A1B4FF",
+          fillOpacity: 0.5
+        }).addTo(this.leaflet_map)
+
+        console.log("💚 GEOFENCE SET")
+      }
+    },
+
+    async updateMarker(ship) {
+      try {
+        const { ship_id, geo, on_ground, ship_name, device_id } = ship
+        const timestamp = new Date().toLocaleString()
+
+        if (this.leaflet_markers[ship_id]) {
+          this.leaflet_markers[ship_id].setLatLng([geo[1], geo[0]])
+
+          // SHIP WS INFO -------------------------------------------------------
+          console.log(`> UPDATE MARKER 🚥🚥🚥
+          Time: ${timestamp}
+          Ship ID: ${ship.ship_id}
+          Ship Name: ${ship.ship_name}
+          Device ID: ${ship.device_id}
+          Coordinates: [Lat: ${ship.geo[1]}, Lng: ${ship.geo[0]}]
+          On Ground: ${ship.on_ground ? "Yes" : "No"}
+          Is Update: ${ship.is_update ? "Yes" : "No"}
+          `)
+          // SHIP WS INFO --------------------------------------------------------
         } else {
-          // Jika marker belum ada, buat marker baru dan tambahkan ke LayerGroup
-          var iconKapal = L.icon({
-            iconUrl: markerKapal,
-            iconSize: [22, 42],
-            iconAnchor: [16, 32]
-          })
+          const icon = on_ground === 1 ? L.icon({ iconUrl: markerNelayan, iconSize: [35, 50] }) : L.icon({ iconUrl: markerKapal, iconSize: [22, 42], iconAnchor: [16, 32] })
 
-          var iconNelayan = L.icon({
-            iconUrl: markerNelayan,
-            iconSize: [35, 50]
-          })
-
-          // console.log(ship)
-
-          var marker = L.marker([ship.geo[1], ship.geo[0]], {
-            icon: ship.on_ground === 1 ? iconNelayan : iconKapal
-          })
+          const marker = L.marker([geo[1], geo[0]], { icon })
             .addTo(this.leaflet_layerGroups)
-            .on("click", function () {
-              var currentUrl = window.location.href.replace("dashboard", "ship")
+            .on("click", () => this.showShipDetails(ship))
 
-              // console.log(currentUrl)
-              document.getElementById("shipDetailsDiv").innerHTML = ""
-
-              const shipDetail = document.createElement("div")
-
-              shipDetail.innerHTML = `
-                <div class='table-responsive p-3'>
-                  <table id="basic-table" class="table mb-0" role="grid">
-                    <thead>
-                    <tr class="bg-secondary">
-                      <th style="font-weight: bolder; width: 5px; color: white; font-size: 20px;" class="text-center" colspan=2>DETAIL KAPAL</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-secondary">
-                    <tr>
-                      <td class="text-white" style='font-weight: bolder; width: 20%;'>ID</td>
-                        <td class="text-white">${ship.ship_id}</td>
-                      </tr>
-                    <tr>
-                      <td class="text-white" style='font-weight: bolder;'>KAPAL</td>
-                      <td class="text-white">${ship.ship_name}</td>
-                    </tr>
-                    <tr>
-                      <td class="text-white" style='font-weight: bolder;'>DEVICE</td>
-                      <td class="text-white">${ship.device_id}</td>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-                        <a href="${currentUrl}/${ship.ship_id}" class="btn btn-sm btn-primary" type="button" style='width:100%'>
-                          <i class="ti ti-search me-sm-1"></i> DETAIL
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-                        <button class="btn btn-sm btn-danger close-btn" type="button" style='width:100%'>
-                          <i class="ti ti-close me-sm-1"></i> CLOSE
-                        </button>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-              `
-
-              document.getElementById("shipDetailsDiv").appendChild(shipDetail)
-              document.getElementById("shipDetailsDiv").style.display = "block"
-
-              // Attach event listener to the close button
-              document.querySelector(".close-btn").addEventListener("click", function () {
-                document.getElementById("shipDetailsDiv").style.display = "none"
-              })
-
-              // console.log(document.getElementById("shipDetailsDiv"))
-            })
-
-          this.leaflet_markers[ship.ship_id] = marker
-
-          // console.log(
-          //   'create marker kapal',
-          //   ship.ship_id,
-          //   ship.ship_name,
-          //   ' - koordinat ',
-          //   ship.geo
-          // )
+          this.leaflet_markers[ship_id] = marker
         }
       } catch (error) {
-        console.log("💥 ERROR ADD MARKER", error)
+        console.error("💥 Error updating marker:", error)
       }
     },
 
-    goToShipDetail() {
-      // Use Vue Router to navigate to ship detail page
-      this.$router.push({ name: "admin.shipDetail", params: { shipId: this.ship.ship_id } })
-    },
+    showShipDetails(ship) {
+      const currentUrl = window.location.href.replace("dashboard", "ship")
+      const shipDetailHtml = `
+        <div class='table-responsive p-3'>
+          <table id="basic-table" class="table mb-0" role="grid">
+            <thead>
+              <tr class="bg-secondary">
+                <th style="font-weight: bolder; width: 5px; color: white; font-size: 20px;" class="text-center" colspan=2>DETAIL KAPAL</th>
+              </tr>
+            </thead>
+            <tbody class="bg-secondary">
+              <tr><td class="text-white" style='font-weight: bolder; width: 20%;'>ID</td><td class="text-white">${ship.ship_id}</td></tr>
+              <tr><td class="text-white" style='font-weight: bolder;'>KAPAL</td><td class="text-white">${ship.ship_name}</td></tr>
+              <tr><td class="text-white" style='font-weight: bolder;'>DEVICE</td><td class="text-white">${ship.device_id}</td></tr>
+              <tr><td colspan="2"><a href="${currentUrl}/${ship.ship_id}" class="btn btn-sm btn-primary" type="button" style='width:100%'><i class="ti ti-search me-sm-1"></i> DETAIL</a></td></tr>
+              <tr><td colspan="2"><button class="btn btn-sm btn-danger close-btn" type="button" style='width:100%'><i class="ti ti-close me-sm-1"></i> CLOSE</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      `
 
-    clickZoom(e) {
-      this.leaflet_map.flyTo(e.target.getLatLng(), 25, {
-        duration: 3
+      const shipDetailsDiv = document.getElementById("shipDetailsDiv")
+      shipDetailsDiv.innerHTML = shipDetailHtml
+      shipDetailsDiv.style.display = "block"
+
+      document.querySelector(".close-btn").addEventListener("click", () => {
+        shipDetailsDiv.style.display = "none"
       })
     },
 
-    resetMap() {
-      this.leaflet_map.setView([this.center.lat, this.center.lng], 15)
-    },
-
-    /******************** */
-    async prosesSocketData(data) {
-      var data = data.data
-      var json_data = JSON.parse(data)
-
-      if (json_data === null) {
-        return
-      } else {
-        json_data.forEach((ship) => {
-          this.markerEditor(ship)
-        })
-      }
-      // console.clear()
-      // console.log("test", json_data)
-    },
-
-    async ws_container() {
-      await this.ws_konek_donk()
-      // await this.ws_test()
-    },
-
-    async ws_konek_donk() {
+    async initializeWebSocket() {
       try {
-        this.socket = new WebSocket(this.ws_url, null, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token")
-          }
-        })
-
-        // return;
-
-        // jika sebelumnya sudah konek
-        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-          console.log("CONNECTION ACTIVE")
-          return
-        }
-
-        // konek ke server
         this.socket = new WebSocket(this.ws_url)
-
-        // kalau ada error
-        this.socket.onerror = (error) => {
-          console.error("💥 WEBSOCKET ERROR:", error)
-        }
-
-        // awal konek
-        this.socket.onopen = () => {
-          // console.clear()
-          console.log("📶 WEBSOCKET CONNECTED")
-        }
-
-        // kalau ada pesan
-        this.socket.onmessage = (message) => {
-          // console.log('Pesan diterima:', message.data)
-          this.prosesSocketData(message)
-        }
-
-        // kalau ditutup
+        this.socket.onopen = () => console.log("📶 WEBSOCKET CONNECTED to", this.ws_url)
+        this.socket.onmessage = (message) => this.processSocketData(message)
+        this.socket.onerror = (error) => console.error("WebSocket error:", error)
         this.socket.onclose = (event) => {
-          if (event.code === 1000) {
-            // putus tp baik2
-            console.log("🗿 WEBSOCKET DISCONNECTED SUCCESS.")
-          } else {
-            // putus karena gak direstui
-            console.log("💥 WEBSOCKET DISCONNECTED CODE:", event.code)
-            // setTimeout(this.ws_konek_donk, 5000) // coba rujuk ulang setelah x detik
-          }
+          console.log(event.code === 1000 ? "WebSocket disconnected" : `WebSocket disconnected with code ${event.code}`)
+          if (event.code !== 1000) setTimeout(() => this.initializeWebSocket(), 5000)
         }
       } catch (error) {
-        console.log("💥 ERROR :", error)
-
-        // jika error saat koneksi berjalan, putuskan koneksi yg berjalan
-        if (this.socket && this.socket?.readyState === WebSocket.OPEN) {
-          // console.log("Koneksi sudah aktif. putusin aja")
-          this.socket.close()
-          return
-        }
-
-        // agar tiap ws tutup / gagal dia akan konek ulang setelah x detik
-        // setTimeout(this.ws_container(), 5000)
+        console.error("💥 WebSocket connection error:", error)
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) this.socket.close()
+        setTimeout(() => this.initializeWebSocket(), 5000)
       }
     },
 
-    ws_test() {
-      console.log("TEST WS :", this.socket)
+    async processSocketData(message) {
+      const jsonData = JSON.parse(message.data)
+      if (jsonData) {
+        jsonData.forEach((ship) => this.updateMarker(ship))
+      }
     },
 
-    /***********************************/
-    // get this when api socket is request
-
-    getAppSetting() {
-      axios
-        .get("api/v1/setting/web", {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token")
-          }
-        })
-        .then((res) => {
-          this.harbour_name = res.data.data.harbour_name
-          this.harbour_geo = res.data.data.geofences
-
-          this.harbourEditor(this.harbour_geo)
-        })
-        .catch((error) => {
-          console.log("💥 GET APP SETTING ERROR :", error)
-        })
-    },
-
-    mapZoomAnimFix() {
-      L.Popup.prototype._animateZoom = function (e) {
-        if (!this._map) {
-          return
-        }
-        var pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center),
-          anchor = this._getAnchor()
-        L.DomUtil.setPosition(this._container, pos.add(anchor))
-      }
-
-      L.Tooltip.prototype._animateZoom = function (e) {
-        if (!this._map) {
-          return
-        }
-
-        var pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center)
-        this._setPosition(pos)
-      }
-
-      L.Tooltip.prototype._updatePosition = function (e) {
-        if (!this._map) {
-          return
-        }
-
-        var pos = this._map.latLngToLayerPoint(this._latlng)
+    async fixMapZoomAnimation() {
+      L.Popup.prototype._animateZoom = L.Tooltip.prototype._animateZoom = function (e) {
+        if (!this._map) return
+        const pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center)
         this._setPosition(pos)
       }
 
       L.Marker.prototype._animateZoom = function (e) {
-        if (!this._map) {
-          return
-        }
-        var pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center).round()
-
+        if (!this._map) return
+        const pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center).round()
         this._setPos(pos)
       }
     }

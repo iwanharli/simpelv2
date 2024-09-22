@@ -13,7 +13,7 @@
       <div id="navbarSupportedContent">
         <ul class="mb-2 navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
           <!-- DARK MODE  -->
-          <li class="nav-item dropdown mobile-navbar" style="display: flex; align-items: center; justify-content: center; margin-right: 50px">
+          <li class="nav-item dropdown mobile-navbar" style="display: flex; align-items: center; justify-content: center; margin-right: 50px; display: none">
             <input class="darkmode" id="darkmode-toggle" type="checkbox" v-model="isDarkMode" @change="updateDarkMode" />
             <label class="darkmode" for="darkmode-toggle">
               <svg version="1.1" class="sun" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 496 496" style="enable-background: new 0 0 496 496" xml:space="preserve">
@@ -59,7 +59,7 @@
           </li>
 
           <!-- NOTIFICATION  -->
-          <li class="nav-item dropdown bg-soft-danger mobile-navbar" style="margin-right: 20px; border-radius: 50px">
+          <li class="nav-item dropdown mobile-navbar notif-custom bg-soft-secondary" style="margin-right: 20px; border-radius: 50px">
             <!-- ICON LONCENG  -->
             <a href="#" class="nav-link" id="notification-drop" data-bs-toggle="dropdown">
               <icon-component type="dual-tone" icon-name="bell" class="icon-bell"></icon-component>
@@ -67,13 +67,12 @@
             </a>
 
             <!-- NOTIF BODY  -->
-            <div class="p-0 sub-drop dropdown-menu dropdown-menu-end" aria-labelledby="notification-drop">
-              <b-card no-body class="m-0 shadow-none">
-                <div class="py-3 card-header d-flex justify-content-between bg-warning">
-                  <b-card-title>
-                    <h5 class="mb-0 text-white">SEMUA NOTIFIKASI</h5>
-                  </b-card-title>
+            <div class="p-0 sub-drop dropdown-menu dropdown-menu-end" style="width: 230px" aria-labelledby="notification-drop">
+              <b-card no-body class="m-0 shadow-none" style="border-radius: 10px 10px 0px 0px">
+                <div class="d-flex align-items-center justify-content-center bg-warning text-center" style="padding: 10px 5px 10px 5px; border-radius: 10px 10px 0px 0px">
+                  <h6 class="mb-0 text-white" style="font-weight: bold; cursor: default">SEMUA NOTIFIKASI</h6>
                 </div>
+
                 <b-card-body class="p-0">
                   <a href="#" class="iq-sub-card" v-for="item in inspeksiData" :key="item.log_id">
                     <RouterLink :to="{ name: 'admin.arrival' }">
@@ -103,15 +102,13 @@
                     </RouterLink>
                   </a>
 
-                  <a href="#" class="iq-sub-card">
+                  <a href="#" class="iq-sub-card p-0">
                     <RouterLink :to="{ name: 'admin.approval-pending' }">
-                      <div class="d-flex align-items-center">
-                        <div class="ms-3 w-100">
-                          <div class="d-flex align-items-center">
-                            <h6 class="mb-0">{{ this.pendingCount }} KAPAL</h6>
-                            &nbsp;
-                            <span class="badge bg-warning ml-2">PENDING</span>
-                          </div>
+                      <div class="w-100">
+                        <div class="d-flex align-items-center justify-content-center">
+                          <h6 class="mb-0">{{ this.pendingCount }} KAPAL</h6>
+                          &nbsp;&nbsp;
+                          <span class="badge bg-warning text-dark">PENDING</span>
                         </div>
                       </div>
                     </RouterLink>
@@ -122,20 +119,22 @@
           </li>
 
           <!-- USER PROFILE  -->
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown user-profile-custom">
             <a class="nav-link py-0 d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <img src="@/assets/images/user2.png" alt="User-Profile" class="img-fluid avatar avatar-50 avatar-rounded" />
               <div class="caption ms-3 d-none d-md-block">
                 <h6 class="caption-title mb-1" style="font-weight: bolder; text-transform: capitalize">{{ uname }}</h6>
-                <small class="caption-sub-title mb-0 mt-0" :class="{ 'bg-danger': urole === 'superadmin', 'bg-info': urole === 'admin' }" style="text-transform: uppercase; border-radius: 5px; color: white; padding: 5px">
+                <small class="caption-sub-title mb-0 mt-0" :class="{ 'bg-danger': urole === 'superadmin', 'bg-info': urole === 'admin' }" style="text-transform: uppercase; border-radius: 5px; color: white; padding: 5px; font-size: 12px">
                   {{ urole }}
                 </small>
               </div>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="navbarDropdown">
               <!-- <li><router-link class="dropdown-item" :to="{ name: 'admin.dashboard' }">Profile</router-link></li>
               <li><hr class="dropdown-divider" /></li> -->
-              <li><a href="#" class="dropdown-item bg-soft-danger logout" style="font-weight: bolder" @click="logout()">Logout</a></li>
+              <li class="custom-logout bg-danger" style="border-radius: 10px">
+                <a href="#" class="dropdown-item logout text-white" style="font-weight: bolder; padding: 10px" @click="logout()">Logout</a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -266,6 +265,33 @@ export default {
 </script>
 
 <style>
+.nav-item.dropdown.user-profile-custom {
+  padding: 5px;
+}
+
+.nav-item.dropdown.user-profile-custom:hover {
+  background: rgba(128, 128, 128, 0.278) !important;
+  border-radius: 10px;
+}
+
+.dropdown-menu {
+  border: 3px solid white;
+  top: 100%;
+  border-radius: 10px;
+}
+
+.custom-logout:hover {
+  background: #882217 !important;
+}
+
+.notif-custom:hover {
+  background: rgba(128, 128, 128, 0.278) !important;
+
+  .icon-bell {
+    color: black !important;
+  }
+}
+
 .circle-notification {
   border-radius: 50%;
   width: 10px;

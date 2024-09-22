@@ -1,16 +1,17 @@
 <template>
-  <b-row class="p-5">
-    <b-col xl="12" class="bg-transparent">
-      <div class="card bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+  <b-row class="p-4">
+    <b-col xl="12">
+      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
         <b-card-header class="bg-primary text-light pb-4">
           <div class="header-title">
             <b-row>
-              <b-col xl="9" lg="8" md="7" sm="7">
+              <b-col xl="6" lg="6" md="6" sm="5">
                 <h4 style="font-weight: bold; color: white">DAFTAR PENGGUNA WEB</h4>
               </b-col>
-              <b-col xl="3" lg="4" md="5" sm="5" class="d-flex justify-content-end custom-export">
-                <button style="display: inline-block" class="btn btn-warning" type="button" id="kapal_detail" data-bs-toggle="modal" data-bs-target="#modalAddUser">
-                  <i class="ti ti-user-plus me-sm-1"></i> TAMBAH USER
+              <b-col xl="6" lg="6" md="6" sm="7" class="d-flex justify-content-end custom-export">
+                <button style="display: inline-block" class="btn btn-sm btn-warning" type="button" id="kapal_detail" data-bs-toggle="modal" data-bs-target="#modalAddUser">
+                  <i class="ti ti-user-plus me-sm-1"></i>
+                  TAMBAH PENGGUNA
                 </button>
               </b-col>
               <b-col xl="12" lg="12" md="12" sm="12" class="mt-3">
@@ -23,47 +24,46 @@
           <div class="table-responsive">
             <table id="basic-table table-border" class="table table-md mb-0" role="grid">
               <thead>
-                <tr class="bg-soft-primary text-primary">
+                <tr class="text-white" style="background: #758cff;">
                   <th class="text-center" style="font-weight: bolder; width: 5px">ID</th>
                   <th class="text-center" style="width: 3%; font-weight: bolder">NAMA</th>
                   <th style="font-weight: bolder; padding: 5px 5px 16px 0px">PENGGUNA</th>
                   <th style="width: 15%; font-weight: bolder">EMAIL</th>
-                  <th class="text-center" style="font-weight: bolder">TERDAFTAR</th>
+                  <th class="text-center" style="font-weight: bolder">TANGGAL TERDAFTAR</th>
                   <th style="width: 5%"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style="background: white">
                 <tr v-for="(item, index) in paginatedUserData" :key="index">
                   <td class="text-center bg-soft-light">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
                   <td class="text-center p-0">
-                    <img class="bg-soft-primary rounded img-fluid avatar-40" src="@/assets/images/user2.png" alt="profile" loading="lazy" v-if="item.role === 'superadmin'" />
-                    <img class="bg-soft-primary rounded img-fluid avatar-40" src="@/assets/images/user.png" alt="profile" loading="lazy" v-else />
+                    <img class="rounded img-fluid avatar-40" src="@/assets/images/user2.png" alt="profile" loading="lazy" v-if="item.role === 'superadmin'" />
+                    <img class="rounded img-fluid avatar-40" src="@/assets/images/user.png" alt="profile" loading="lazy" v-else />
                   </td>
                   <td class="p-0">
-                    <span style="font-weight: bold; text-transform: uppercase">{{ item.name }}</span> <br />
+                    <span style="font-weight: bold; text-transform: uppercase">
+                      {{ item.name }}
+                    </span>
+                    <br />
                     <small>
-                      <span class="badge bg-danger" v-if="item.role === 'superadmin'" style="padding: 5px">{{ item.role }}</span>
-                      <span class="badge bg-info" v-else>{{ item.role }}</span>
+                      <span class="badge bg-soft-danger text-danger" v-if="item.role === 'superadmin'" style="text-transform: capitalize; padding: 5px">{{ item.role }}</span>
+                      <span class="badge bg-soft-info text-info" style="text-transform: capitalize; padding: 5px" v-else>{{ item.role }}</span>
                     </small>
                   </td>
                   <td>
                     {{ item.email }} &nbsp;
                     <span class="badge bg-warning" v-if="item.email_verified_at === ''" style="padding: 5px">unverified</span>
                   </td>
-                  <td class="text-center">{{ item.updated_at }}</td>
+                  <td class="text-center">{{ item.created_at }}</td>
                   <td class="text-center bg-soft-primary">
                     <div class="flex align-items-center list-user-action">
-                      <a class="btn btn-sm btn-icon btn-info mx-1" data-bs-toggle="modal" data-bs-target="#modalEditUser" @click="editUser(item)">
-                        <span class="btn-inner">
-                          <icon-component type="outlined" icon-name="pencil-alt" />
-                        </span>
+                      <a class="btn btn-md btn-icon btn-info mx-1" data-bs-toggle="modal" data-bs-target="#modalEditUser" @click="editUser(item)">
+                        <i class="ti ti-edit"></i>
                       </a>
-                      <a class="btn btn-sm btn-icon btn-danger mx-1" @click="deleteUser(item.id)">
-                        <span class="btn-inner">
-                          <icon-component type="outlined" icon-name="trash" />
-                        </span>
+                      <a class="btn btn-md btn-icon btn-danger mx-1" @click="deleteUser(item.id)">
+                        <i class="ti ti-trash"></i>
                       </a>
                     </div>
                   </td>
@@ -72,7 +72,7 @@
             </table>
 
             <!-- PAGINATION -->
-            <div class="pagination-container p-3 bg-soft-secondary">
+            <div class="pagination-container p-3 bg-soft-secondary" style="border-radius: 0px 0px 20px 20px">
               <!-- Previous button -->
               <button @click="currentPage -= 1" :disabled="currentPage === 1" class="prev-next-button"><span>&#9665;</span> Previous</button>
 
@@ -484,6 +484,23 @@ export default {
             })
         }
       })
+    },
+
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const months = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      ];
+
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
     },
 
     togglePasswordVisibility() {

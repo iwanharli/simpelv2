@@ -1,7 +1,7 @@
 <template>
-  <b-row class="p-5">
-    <b-col xl="12" class="bg-transparent">
-      <div class="card bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+  <b-row class="p-4">
+    <b-col xl="12">
+      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
         <b-card-header class="bg-primary text-light pb-4">
           <div class="header-title">
             <b-row>
@@ -18,38 +18,36 @@
           <div class="table-responsive">
             <table id="basic-table table-border" class="table table-md mb-0" role="grid">
               <thead>
-                <tr class="bg-soft-primary text-primary">
+                <tr class="text-white" style="background: #758cff;">
                   <th style="font-weight: bolder; width: 5px" class="text-center">ID</th>
                   <th style="font-weight: bolder">NAMA KAPAL</th>
                   <th style="font-weight: bolder">USERNAME</th>
                   <th style="width: 15%; font-weight: bolder" class="text-center">ROLE</th>
-                  <th style="font-weight: bolder" class="text-center">TERDAFTAR</th>
+                  <th style="font-weight: bolder" class="text-center">PEMBARUAN TERAKHIR</th>
+                  <th style="font-weight: bolder" class="text-center">TANGGAL TERDAFTAR</th>
                   <th style="width: 5%"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style="background: white;">
                 <tr v-for="(item, index) in paginatedUserData" :key="index">
                   <td class="text-center bg-soft-light">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
-                  <td style="text-transform: capitalize; font-weight: bolder">
+                  <td style="text-transform: uppercase; font-weight: bolder">
                     {{ item.name }}
                   </td>
                   <td style="text-transform: lowercase; font-weight: bolder">
                     {{ item.username }}
                   </td>
                   <td class="text-center" style="text-transform: uppercase">
-                    <!-- <span class="badge" :class="item.color">{{ item.status }}</span> -->
-                    <span class="badge bg-danger" v-if="item.role === 'superadmin'" style="padding: 5px">{{ item.role }}</span>
-                    <span class="badge bg-info" v-else>{{ item.role }}</span>
+                    <span class="badge bg-soft-secondary text-secondary" v-if="item.role === 'User'" style="padding: 5px">{{ item.role }}</span>
                   </td>
                   <td class="text-center">{{ item.updated_at }}</td>
+                  <td class="text-center">{{ item.created_at }}</td>
                   <td class="text-center bg-soft-primary">
                     <div class="flex align-items-center list-user-action">
-                      <a class="btn btn-sm btn-icon btn-info mx-1" data-bs-toggle="modal" data-bs-target="#modalEditUserMobile" @click="editUserMobile(item)">
-                        <span class="btn-inner">
-                          <icon-component type="outlined" icon-name="pencil-alt" />
-                        </span>
+                      <a class="btn btn-md btn-icon btn-info" data-bs-toggle="modal" data-bs-target="#modalEditUserMobile" @click="editUserMobile(item)">
+                        <i class="ti ti-edit"></i>
                       </a>
                       <!-- {{ item }} -->
                     </div>
@@ -59,7 +57,7 @@
             </table>
 
             <!-- PAGINATION -->
-            <div class="pagination-container p-3 bg-soft-secondary">
+            <div class="pagination-container p-3 bg-soft-secondary" style="border-radius: 0px 0px 20px 20px">
               <!-- Previous button -->
               <button @click="currentPage -= 1" :disabled="currentPage === 1" class="prev-next-button"><span>&#9665;</span> Previous</button>
 

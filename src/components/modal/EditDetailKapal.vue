@@ -11,14 +11,14 @@
             <div class="modal-body">
               <div class="row">
                 <div class="col mb-4">
-                  <label class="form-label" style="font-weight: bolder">Device ID</label>
-                  <input type="text" id="shipDeviceID" class="form-control"/>
+                  <label class="form-label" style="font-weight: bolder">Nama Kapal</label>
+                  <input type="text" id="shipName" class="form-control" v-model="ship.ship_name" disabled/>
                 </div>
               </div>
               <div class="row">
                 <div class="col mb-4">
-                  <label class="form-label" style="font-weight: bolder">Nama Kapal</label>
-                  <input type="text" id="shipName" class="form-control" v-model="ship.ship_name" />
+                  <label class="form-label" style="font-weight: bolder">Nomor IOT</label>
+                  <input type="text" id="shipIOT" class="form-control" v-model="shipIOT" />
                 </div>
               </div>
               <div class="row">
@@ -30,7 +30,7 @@
               <div class="row">
                 <div class="col mb-4">
                   <label class="form-label" style="font-weight: bolder">Penanggung Jawab</label>
-                  <input type="text" class="form-control" v-model="ship.responsible_name" />
+                  <input type="text" class="form-control" v-model="ship.responsible_name" disabled/>
                 </div>
               </div>
               <div class="row">
@@ -57,11 +57,11 @@
                 <div class="col mb-4">
                   <label class="form-label" style="font-weight: bolder">Dimensi Kapal (P x L)</label>
                   <div class="input-group">
-                    <input type="number" class="form-control" v-model="shipWidth" />
+                    <input type="text" class="form-control" v-model="shipWidth" />
                     <div class="input-group-prepend">
                       <span class="input-group-text">x</span>
                     </div>
-                    <input type="number" class="form-control" v-model="shipLength" />
+                    <input type="text" class="form-control" v-model="shipLength" />
                   </div>
                 </div>
               </div>
@@ -106,6 +106,7 @@ export default {
       ship: {},
 
       shipOwner: "",
+      shipIOT: "",
       shipId: "",
       shipType: "",
       shipDimension: "",
@@ -130,7 +131,6 @@ export default {
 
   mounted() {
     this.shipId = this.$route.params.shipId
-
     this.getShipDetail(this.shipId)
   },
 
@@ -156,16 +156,13 @@ export default {
           this.shipSelarMark = this.shipBio.selar_mark
           this.shipOwner = this.shipBio.owner_name
           this.shipGT = this.shipBio.gt
+          this.shipIOT = this.ship.detail.iot_phone
 
-          // Split dimension
-          const dimensionParts = this.shipDimension.split(/\s*X\s*/)
+          const dimension = this.shipBio.dimension
+          const [length, width] = dimension.split("X").map((value) => value.trim().replace(",", "."))
 
-          if (dimensionParts.length === 2) {
-            this.shipWidth = dimensionParts[0].trim()
-            this.shipLength = dimensionParts[1].trim()
-          } else {
-            return
-          }
+          this.shipLength = parseFloat(length)
+          this.shipWidth = parseFloat(width)
         })
         .catch((error) => {
           console.error(error)
@@ -186,7 +183,8 @@ export default {
         bkp: this.shipBkp,
         selar_mark: this.shipSelarMark,
         gt: this.shipGT,
-        owner_name: this.shipOwner
+        owner_name: this.shipOwner,
+        iot_phone: this.shipIOT
       }
 
       console.log(updatedData, config)

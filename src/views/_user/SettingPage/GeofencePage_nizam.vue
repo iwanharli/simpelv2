@@ -1,17 +1,17 @@
 <template>
-  <div class="card-body p-5">
-    <div class="bg-secondary" style="padding: 20px; margin-bottom: 20px; border-radius: 20px">
+  <div class="card-body p-0">
+    <div class="bg-secondary" style="padding: 20px">
       <div class="d-flex justify-content-center">
-        <router-link :to="{ name: 'admin.setting-geofence-tegalsari', params: { id: '919191' } }" class="btn btn-primary">TEGALSARI</router-link> &nbsp; &nbsp;
-        <router-link :to="{ name: 'admin.setting-geofence-nizamZachman', params: { id: '929292' } }" class="btn btn-primary ml-2">NIZAM ZACHMAN</router-link>
+        <router-link :to="{ name: 'admin.setting-geofence-nizamZachman', params: { id: '919191' } }" class="btn btn-info ml-2">NIZAM ZACHMAN</router-link> &nbsp; &nbsp;
+        <router-link :to="{ name: 'admin.setting-geofence-tegalsari', params: { id: '929292' } }" class="btn btn-info">TEGALSARI</router-link>
       </div>
     </div>
 
     <!-- Map Container -->
-    <div id="map" ref="map" @ready="initializeMap" style="border-radius: 20px">
-      <div class="map-buttons-container bg-dark" style="border-radius: 0px 0px 20px 20px; border: 3px solid grey">
-        <button class="btn btn-md btn-primary p-2" style="width: 70%; height: 50%" @click="onSaveButtonClick()">UBAH GEOFENCE LABUH</button>
-        <button class="btn btn-md btn-warning p-2" style="width: 28%; height: 50%" type="submit" @click="resetSetting()">RESET</button>
+    <div id="map" ref="map" @ready="initializeMap" style="">
+      <div class="map-buttons-container">
+        <button class="btn btn-md btn-map-custom-edit p-3" @click="onSaveButtonClick()">UBAH GEOFENCE</button>
+        <button class="btn btn-md btn-warning btn-map-custom-reset p-3" type="submit" @click="resetSetting()">RESET</button>
       </div>
     </div>
   </div>
@@ -238,7 +238,7 @@ export default {
 
     async resetSetting() {
       // INITIAL
-      this.harbourCode = 929292
+      this.harbourCode = 919191
       this.harbourName = "PELABUHAN NIZAM ZACHMAN"
       this.appMode = "interval"
       this.appInterval = 30
@@ -303,22 +303,58 @@ export default {
 <style>
 .card-body {
   position: relative;
+  height: 100%; /* Make the card-body stretch to full height */
 }
 
 #map {
-  min-height: 78vh;
-  border-radius: 0px 0px 0px 0px;
+  min-height: 87vh;
   position: relative;
 }
 
 .map-buttons-container {
   position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  /* justify-content: space-between; */
+  background: #21252994;
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 25px;
+  gap: 100px;
+  padding: 30px;
+  border-radius: 20px 20px 0px 0px;
   z-index: 5000;
+}
+
+.btn-map-custom-edit {
+  background: #3a57e8;
+  width: 50%;
+  height: 50%;
+  border-radius: 20px;
+  border: 3px solid white;
+  color: white;
+  font-weight: 600;
+}
+
+.btn-map-custom-edit:hover {
+  background: #334dcc;
+  color: white;
+  border: 3px solid white;
+}
+
+.btn-map-custom-reset {
+  background: #f16a1b;
+  width: 50%;
+  height: 50%;
+  border-radius: 20px;
+  border: 4px solid white;
+  color: white;
+  font-weight: 600;
+}
+
+.btn-map-custom-reset:hover {
+  background: #cd5916;
+  color: white;
+  border: 4px solid white;
 }
 </style>

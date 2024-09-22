@@ -1,9 +1,9 @@
 <template>
   <div style="position: relative; height: 800px">
-    <div id="map" style="height: 100%; width: 100%; border-radius: 10px; z-index: 0"></div>
+    <div id="map" style="height: 100%; width: 100%; border-radius: 20px; z-index: 0"></div>
 
     <div class="col-xl-6 col-md-6 cols-sm-12 mx-auto" style="position: absolute; top: 92%; left: 50%; transform: translate(-50%, -50%); z-index: 1">
-      <div class="row" style="background: rgba(0, 0, 0, 0.453); padding: 10px; border-radius: 10px">
+      <div class="row" style="background-color: #83838357; padding: 10px; border-radius: 10px; border: 1px solid white;">
         <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12">
           <div class="input-group input-daterange" id="bs-datepicker-daterange">
             <input type="date" placeholder="MM/DD/YYYY" class="form-control" v-model="dateStart" />
@@ -13,7 +13,7 @@
         </div>
 
         <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12">
-          <button class="btn btn-secondary d-grid w-100" type="submit" @click="filterHistory()">Lihat History</button>
+          <button class="btn btn-warning d-grid w-100" type="submit" @click="filterHistory()">Lihat History</button>
         </div>
       </div>
     </div>

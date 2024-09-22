@@ -56,6 +56,14 @@ const userRoutes = (prefix) => [
     component: () => import('@/views/_user/ArrivalPage/ArrivalPage.vue')
   },
 
+  // DEBT 
+  {
+    path: 'debt',
+    name: prefix + '.debt',
+    meta: { auth: true, name: 'DebtPage', isBanner: true },
+    component: () => import('@/views/_user/DebtPage/DebtPage.vue')
+  },
+
   // APPROVAL 
   {
     path: 'approval/accepted',
@@ -98,13 +106,13 @@ const userRoutes = (prefix) => [
     component: () => import('@/views/_user/SettingPage/ApplicationPage.vue')
   },
   {
-    path: 'setting/geofence/919191',
+    path: 'setting/geofence/929292',
     name: prefix + '.setting-geofence-tegalsari',
     meta: { auth: true, name: 'SettingPage', isBanner: false },
-    component: () => import('@/views/_user/SettingPage/GeofencePage.vue')
+    component: () => import('@/views/_user/SettingPage/GeofencePage_tegalsari.vue')
   },
   {
-    path: 'setting/geofence/929292',
+    path: 'setting/geofence/919191',
     name: prefix + '.setting-geofence-nizamZachman',
     meta: { auth: true, name: 'SettingPage', isBanner: false },
     component: () => import('@/views/_user/SettingPage/GeofencePage_nizam.vue')

@@ -1,5 +1,4 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
+module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? process.env.BASE_URL : '/',
 
   pluginOptions: {
@@ -10,5 +9,5 @@ module.exports = defineConfig({
       enableInSFC: false
     }
   },
-  transpileDependencies: true
-})
+  transpileDependencies: true,
+};

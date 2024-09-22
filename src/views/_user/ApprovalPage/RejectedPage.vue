@@ -1,15 +1,15 @@
 <template>
-  <b-row class="p-5">
-    <b-col xl="12" class="bg-transparent">
-      <div class="card bg-soft-light" data-aos="fade-down" data-aos-delay="110">
-        <b-card-header class="bg-danger text-light pb-4">
+  <b-row class="p-4">
+    <b-col xl="12">
+      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+        <b-card-header class="bg-secondary pb-3">
           <div class="header-title">
             <b-row>
-              <b-col xl="9" lg="8" md="7" sm="7">
-                <h4 style="font-weight: bold; color: white">PENGAJUAN DITOLAK</h4>
+              <b-col xl="6" lg="6" md="6" sm="5">
+                <h4 style="font-weight: bold; color: white">PENGAJUAN <span style="color: #ff2424">DITOLAK</span></h4>
               </b-col>
-              <b-col xl="3" lg="4" md="5" sm="5" class="d-flex justify-content-end custom-export">
-                <button style="display: inline-block" class="btn btn-secondary text-white" type="button" id="kapal_detail" @click="downloadCSV"><i class="ti ti-download me-sm-1"></i> EXPORT CSV</button>
+              <b-col xl="6" lg="6" md="6" sm="7" class="d-flex justify-content-end custom-export">
+                <button type="button" id="kapal_detail" class="btn btn-sm btn-warning" style="display: inline-block" @click="downloadCSV"><i class="ti ti-download me-sm-1"></i> EXPORT CSV</button>
               </b-col>
               <b-col xl="12" lg="12" md="12" sm="12" class="mt-3">
                 <input type="text" class="form-control border-0" placeholder="Pencarian (Kapal / Penanggung Jawab / Device ID / No HP)" v-model="searchQuery" />
@@ -21,7 +21,7 @@
           <div class="table-responsive">
             <table id="basic-table" class="table table-border mb-0" role="grid">
               <thead>
-                <tr class="bg-soft-danger text-danger">
+                <tr class="text-white" style="background: #000f25e0; border-top: 1px solid white">
                   <th scope="col" style="font-weight: bolder; width: 5px" class="text-center">ID</th>
                   <th scope="col" style="font-weight: bolder">NAMA KAPAL</th>
                   <th scope="col" style="font-weight: bolder">PENANGGUNG JAWAB</th>
@@ -29,7 +29,7 @@
                   <th scope="col" class="text-center" style="font-weight: bolder; width: 5%">NOMOR HP</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style="background: white">
                 <!-- Check if pendingList has data -->
                 <tr v-if="!filteredRejectedData || filteredRejectedData.length === 0">
                   <td colspan="6" class="bg-soft-white">Data kosong</td>
@@ -50,9 +50,9 @@
                     {{ item.created_at }}
                   </td>
                   <td class="text-center bg-soft-light">
-                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm btn-soft-success" target="_blank" style="display: flex; gap: 10px; align-items: center">
-                      <img src="@/assets/images/whatsapp.png" width="17" height="17" style="display: inline-block" />
-                      <span style="display: inline-block; color: black !important">{{ item.phone }}</span>
+                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm btn-info p-2" target="_blank" style="display: flex; gap: 10px; align-items: center">
+                      <img src="@/assets/images/icon/whatsapp.png" width="20" height="20" style="display: inline-block; box-shadow: 0 0 5px white; border-radius: 5px" />
+                      <span style="display: inline-block; color: white !important">{{ item.phone }}</span>
                     </a>
                   </td>
                 </tr>

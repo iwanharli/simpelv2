@@ -1,26 +1,35 @@
 <template>
-  <b-row class="p-5" style="min-height: 91vh">
-    <b-col xl="12" class="bg-transparent">
-      <div class="card bg-soft-secondary" data-aos="fade-down" data-aos-delay="110">
-        <b-card-header class="bg-primary text-light pb-4">
+  <b-row class="p-4" style="min-height: 91vh">
+    <!-- SETTING APLIKASI  -->
+    <b-col xl="9" class="bg-transparent" data-aos="fade-right" data-aos-delay="100">
+      <div class="card bg-light" style="border-radius: 0px 0px 20px 20px">
+        <b-card-header class="bg-secondary text-light pb-4">
           <div class="header-title">
             <b-row>
               <b-col xl="9" lg="9" md="9" sm="9">
-                <h4 style="font-weight: bold; color: white">SETTING APLIKASI &nbsp;<small style="font-weight: lighter;">*(untuk android)</small></h4>
+                <h4 style="font-weight: bold; color: white">
+                  SETTING APLIKASI &nbsp;
+                  <span style="font-weight: lighter; font-size: 15px">*(untuk android)</span>
+                </h4>
               </b-col>
             </b-row>
           </div>
         </b-card-header>
-        <div class="card-body p-5 bg-light">
+        <div class="card-body p-5 bg-light" style="border-radius: 0px 0px 20px 20px; border: 5px solid #001f4d">
           <div class="row">
-            <div class="col-md-6 mb-5">
+            <div class="col-md-4 mb-5">
               <label class="form-label text-black" style="font-weight: bolder">KODE PELABUHAN</label>
               <input type="text" class="form-control" v-model="harbourCode" required="" style="border-color: white" />
             </div>
-            <div class="col-md-6 mb-5">
+            <div class="col-md-4 mb-5">
               <label class="form-label text-black" style="font-weight: bolder">NAMA PELABUHAN</label>
               <input type="text" class="form-control" v-model="harbourName" required="" style="border-color: white" />
             </div>
+            <div class="col-md-4 mb-5">
+              <label class="form-label text-black" style="font-weight: bolder">KONTAK ADMIN</label>
+              <input type="text" class="form-control" v-model="adminContact" required="" style="border-color: white" />
+            </div>
+
             <div class="col-md-4 mb-5">
               <label class="form-label text-black" style="font-weight: bolder">MODE</label>
               <select class="form-select" v-model="appMode" required="">
@@ -36,11 +45,43 @@
               <label class="form-label text-black" style="font-weight: bolder">JARAK</label>
               <input type="number" class="form-control" placeholder="30" v-model="appRange" required="" style="border-color: white" />
             </div>
+
             <div class="col-md-8">
-              <button class="btn btn-primary p-2" type="submit" style="width: 100%" @click="updateMobileSetting">SIMPAN PERUBAHAN</button>
+              <button class="btn btn-primary p-2 mt-2" type="submit" style="width: 100%" @click="updateMobileSetting">SIMPAN PERUBAHAN</button>
             </div>
             <div class="col-md-4">
-              <button class="btn btn-warning p-2" type="submit" style="width: 100%" @click="resetSetting">RESET</button>
+              <button class="btn btn-warning p-2 mt-2" type="submit" style="width: 100%" @click="resetSetting">RESET</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </b-col>
+
+    <!-- SETTING BIAYA  -->
+    <b-col xl="3">
+      <div class="card bg-light" data-aos="fade-down" data-aos-delay="110" style="border-radius: 0px 0px 20px 20px">
+        <b-card-header class="bg-secondary text-light pb-4">
+          <div class="header-title">
+            <b-row>
+              <b-col xl="9" lg="9" md="9" sm="9">
+                <h4 style="font-weight: bold; color: white">BIAYA LABUH</h4>
+              </b-col>
+            </b-row>
+          </div>
+        </b-card-header>
+        <div class="card-body p-5 bg-light" style="border-radius: 0px 0px 20px 20px; border: 5px solid #001f4d">
+          <div class="row">
+            <div class="col-md-12 mb-5">
+              <label class="form-label text-black" style="font-weight: bolder">BIAYA LABUH</label>
+              <input type="text" class="form-control" placeholder="30.000" v-model="formattedDockingCost" @input="formatDockingCost" required style="border-color: white; background: #edff0033" />
+            </div>
+            <div class="col-md-12 mb-5">
+              <label class="form-label text-black" style="font-weight: bolder">MULTIPLIER BIAYA</label>
+              <input type="number" class="form-control" placeholder="30" v-model="costMultiplier" required="" style="border-color: white; background: #edff0033" />
+            </div>
+
+            <div class="col-12">
+              <button class="btn btn-secondary p-2 mt-2" type="submit" style="width: 100%" @click="updateMobileSetting">SIMPAN PERUBAHAN</button>
             </div>
           </div>
         </div>
@@ -74,12 +115,26 @@ export default {
     return {
       harbourCode: "",
       harbourName: "",
+      adminContact: "",
       appMode: "",
       appInterval: "",
       appRange: "",
       appVersion: "",
       appUrl: "",
+      dockingCost: 0,
+      costMultiplier: 0,
       appGeofence: []
+    }
+  },
+
+  computed: {
+    formattedDockingCost: {
+      get() {
+        return this.dockingCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      },
+      set(value) {
+        this.dockingCost = parseInt(value.replace(/\./g, ""), 10) || 0
+      }
     }
   },
 
@@ -98,12 +153,14 @@ export default {
 
           this.harbourCode = appSetting.harbour_code
           this.harbourName = appSetting.harbour_name
+          this.adminContact = appSetting.admin_contact
           this.appMode = appSetting.mode
           this.appInterval = appSetting.interval
           this.appRange = appSetting.range
           this.appVersion = appSetting.apk_min_version
           this.appUrl = appSetting.apk_min_download
-
+          this.costMultiplier = appSetting.cost_multiplier
+          this.dockingCost = appSetting.docking_cost
           this.appGeofence = appSetting.geofences
 
           console.log("💚 SETTING FETCHED", appSetting)
@@ -121,10 +178,13 @@ export default {
       const updatedData = {
         harbour_code: parseInt(this.harbourCode),
         harbour_name: this.harbourName,
+        admin_contact: this.adminContact,
         mode: this.appMode,
         apk_min_version: this.appVersion,
         interval: parseInt(this.appInterval),
         range: parseInt(this.appRange),
+        docking_cost: parseInt(this.dockingCost),
+        cost_multiplier: parseInt(this.costMultiplier),
         apk_download_link: this.appUrl,
         geofence: []
       }
@@ -149,9 +209,14 @@ export default {
     },
 
     async resetSetting() {
+      // Preserve the current values of formattedDockingCost and costMultiplier
+      const currentFormattedDockingCost = parseInt(this.formattedDockingCost.replace(/\./g, ""), 10)
+      const currentCostMultiplier = this.costMultiplier
+
       // INITIAL
       this.harbourCode = 919191
-      this.harbourName = "PELABUHAN TEGALSARI"
+      this.harbourName = "PELABUHAN NIZAM ZACHMAN"
+      this.adminContact = "081802796414"
       this.appMode = "interval"
       this.appInterval = 30
       this.appRange = 2
@@ -165,15 +230,18 @@ export default {
       const updatedData = {
         harbour_code: parseInt(this.harbourCode),
         harbour_name: this.harbourName,
+        admin_contact: this.adminContact,
         mode: this.appMode,
         apk_min_version: this.appVersion,
         interval: parseInt(this.appInterval),
         range: parseInt(this.appRange),
+        docking_cost: currentFormattedDockingCost,
+        cost_multiplier: currentCostMultiplier,
         apk_download_link: this.appUrl,
         geofence: coordinate
       }
 
-      //   console.log(updatedData)
+      console.log(updatedData)
 
       await axios
         .post("api/v1/setting/create-or-update", updatedData, config)
@@ -194,6 +262,11 @@ export default {
         })
 
       console.log("FORM HAS BEEN RESET")
+    },
+
+    formatDockingCost(event) {
+      const value = event.target.value.replace(/\./g, "") // remove any existing dots
+      this.dockingCost = parseInt(value, 10) || 0
     }
   }
 }

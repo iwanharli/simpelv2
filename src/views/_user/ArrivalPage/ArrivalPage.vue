@@ -1,15 +1,15 @@
 <template>
-  <b-row class="p-5">
-    <b-col xl="12" class="bg-transparent">
-      <div class="card bg-soft-light" data-aos="fade-down" data-aos-delay="110">
-        <b-card-header class="bg-secondary text-light pb-4">
+  <b-row class="p-4">
+    <b-col xl="12">
+      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+        <b-card-header class="bg-secondary pb-3">
           <div class="header-title">
             <b-row>
-              <b-col xl="9" lg="8" md="7" sm="7">
+              <b-col xl="6" lg="6" md="6" sm="5">
                 <h4 style="font-weight: bold; color: white">KEDATANGAN KAPAL</h4>
               </b-col>
-              <b-col xl="3" lg="4" md="5" sm="5" class="d-flex justify-content-end custom-export">
-                <select class="form-select" v-model="rowsPerPage" @change="fetchData" :style="{ width: '100px' }">
+              <b-col xl="6" lg="6" md="6" sm="7" class="d-flex justify-content-end custom-export">
+                <select class="form-select-sm" v-model="rowsPerPage" @change="fetchData" :style="{ width: '70px' }">
                   <option v-for="option in rowsOptions" :key="option" :value="option">{{ option }}</option>
                 </select>
                 <!-- <button style="display: inline-block" class="btn btn-secondary text-white" type="button" id="kapal_detail" @click="downloadCSV"><i class="ti ti-download me-sm-1"></i> EXPORT CSV</button> -->
@@ -24,7 +24,7 @@
           <div class="table-responsive">
             <table id="basic-table" class="table table-border mb-0" role="grid">
               <thead>
-                <tr class="bg-soft-secondary text-secondary">
+                <tr class="text-white" style="background: #000f25e0; border-top: 1px solid white;">
                   <th style="font-weight: bolder; width: 5px" class="text-center">ID</th>
                   <th style="font-weight: bolder">NAMA KAPAL</th>
                   <th style="font-weight: bolder">LATITUDE</th>
@@ -33,7 +33,7 @@
                   <th style="width: 5%"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style="background: white">
                 <!-- Check if pendingList has data -->
                 <tr v-if="paginatedShips.length === 0">
                   <td colspan="6" class="bg-soft-white">Data kosong</td>

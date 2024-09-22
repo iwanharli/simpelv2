@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 0px !important">
+  <div style="padding: 0px !important;">
     <b-card no-body style="margin-bottom: 0px">
       <div class="position-relative">
         <MapDashboard />
@@ -8,26 +8,24 @@
           <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header bg-primary">
-                <h4 class="modal-title text-white" style="font-weight: bold">STATISTIC</h4>
+                <h4 class="modal-title text-white" style="font-weight: bold">STATISTIK KAPAL</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body">
-                <b-card no-body>
-                  <b-card-body class="bg-soft-light" style="border-radius: 0px 0px 8px 8px">
-                    <b-row>
-                      <b-col xl="12" lg="12" md="12">
-                        <StatisticChart />
-                      </b-col>
-                      <hr />
-                      <b-col xl="6" lg="6" sm="12">
-                        <TerrainChart />
-                      </b-col>
-                      <b-col xl="6" lg="6" sm="12">
-                        <LogsChart />
-                      </b-col>
-                    </b-row>
-                  </b-card-body>
-                </b-card>
+              <div class="modal-body" style="background: white; padding: 0px !important; border-radius: 15px;">
+                <b-card-body style="border-radius: 0px">
+                  <b-row>
+                    <b-col xl="12" lg="12" md="12">
+                      <StatisticChart />
+                    </b-col>
+                    <hr />
+                    <b-col xl="6" lg="6" sm="12">
+                      <TerrainChart />
+                    </b-col>
+                    <b-col xl="6" lg="6" sm="12">
+                      <LogsChart />
+                    </b-col>
+                  </b-row>
+                </b-card-body>
               </div>
             </div>
           </div>
@@ -44,7 +42,6 @@
 <script>
 import AOS from "aos"
 import { onMounted } from "vue"
-
 import MapDashboard from "@/components/map/MapDashboard.vue"
 import StatisticChart from "@/components/chart/StatisticComponent.vue"
 import TerrainChart from "@/components/chart/TerrainComponent.vue"

@@ -5,7 +5,9 @@
 <script>
 import { onMounted, onUnmounted, computed } from 'vue'
 import { useStore } from 'vuex'
+// import '@/assets/themify/themify-icons.css';
 import '@/plugins/styles'
+
 export default {
   name: 'App',
   setup() {

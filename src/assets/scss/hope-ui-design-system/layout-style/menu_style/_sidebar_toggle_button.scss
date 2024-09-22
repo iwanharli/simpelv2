@@ -26,7 +26,7 @@
 .sidebar-mini {
     .sidebar-toggle {
         .icon {
-            transform: rotate(180deg);
+            transform: rotate(90deg);
         }
     }
 }
@@ -43,7 +43,7 @@
                 transition: transform;
                 transition-duration: var(--sidebar-transition-duration);
                 transition-timing-function: var(--sidebar-transition-function-ease-in-out);
-                transform: rotate(180deg);
+                transform: rotate(90deg);
             }
         }
     }

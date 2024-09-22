@@ -5,7 +5,8 @@
         <div class="d-flex justify-content-between align-items-center">
           <div class="text-white">
             <h2 style="color: white">
-              <Vue3autocounter ref="counter" :startAmount="0" :endAmount="this.statisticData.total_ship" />
+              <!-- <vue3-autocounter ref="counter" :startAmount="0" :endAmount="this.statisticData.total_ship" /> -->
+              {{ this.statisticData.total_ship }}
             </h2>
             TOTAL KAPAL
           </div>
@@ -17,7 +18,10 @@
       <b-card class="bg-info h-100">
         <div class="d-flex justify-content-between align-items-center">
           <div class="text-white">
-            <h2 style="color: white"><Vue3autocounter ref="counter" :startAmount="0" :endAmount="this.statisticData.total_checkin" /></h2>
+            <h2 style="color: white">
+              <!-- <vue3-autocounter ref="counter" :startAmount="0" :endAmount="this.statisticData.total_checkin" /> -->
+              {{ this.statisticData.total_checkin }}
+            </h2>
             CHECK IN
           </div>
         </div>
@@ -28,7 +32,10 @@
       <b-card class="bg-warning h-100 card-custom">
         <div class="d-flex justify-content-between align-items-center">
           <div class="text-white">
-            <h2 style="color: white"><Vue3autocounter ref="counter" :startAmount="0" :endAmount="this.statisticData.total_checkout" /></h2>
+            <h2 style="color: white">
+              <!-- <vue3-autocounter ref="counter" :startAmount="0" :endAmount="this.statisticData.total_checkout" /> -->
+              {{ this.statisticData.total_checkout }}
+            </h2>
             CHECK OUT
           </div>
         </div>
@@ -39,7 +46,10 @@
       <b-card class="h-100 card-custom" style="background: #c74f7c">
         <div class="d-flex justify-content-between align-items-center">
           <div class="text-white">
-            <h2 style="color: white"><Vue3autocounter ref="counter" :startAmount="0" :endAmount="this.statisticData.total_fraud" /></h2>
+            <h2 style="color: white">
+              <!-- <vue3-autocounter ref="counter" :startAmount="0" :endAmount="this.statisticData.total_fraud" /> -->
+              {{ this.statisticData.total_fraud }}
+            </h2>
             FRAUD
           </div>
         </div>
@@ -47,44 +57,41 @@
     </b-col>
   </b-row>
 </template>
+
 <script>
 import axios from "axios"
-import Vue3autocounter from "vue3-autocounter"
+// import Vue3AutoCounter from 'vue3-autocounter';
+import { defineComponent } from "vue"
+// import Vue3autocounter from 'vue3-autocounter';
 
 import { ref, onMounted } from "vue"
 import { RouterLink } from "vue-router"
 
 export default {
-  name: "Ship Page",
+  name: "StatisticsComponent",
   components: {
-    Vue3autocounter,
+    // 'vue3-autocounter': Vue3autocounter,
     RouterLink
   },
+  setup() {
+    const statisticData = ref([])
 
-  data() {
-    return {
-      statisticData: []
+    const fetchStatisticChart = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const config = { headers: { Authorization: `Bearer ${token}` } }
+        const response = await axios.get("/api/v1/dashboard/statistic", config)
+
+        statisticData.value = response.data.data
+        console.log("💚 STATISTIC", statisticData.value)
+      } catch (error) {
+        console.error("💥 STATISTIC Error:", error)
+      }
     }
-  },
 
-  mounted() {
-    this.fetchStatisticChart()
-  },
+    onMounted(fetchStatisticChart)
 
-  methods: {
-    async fetchStatisticChart() {
-      const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
-      await axios
-        .get("/api/v1/dashboard/statistic", config)
-        .then((response) => {
-          this.statisticData = response.data.data
-
-          console.log("💚 STATISTIC", this.statisticData)
-        })
-        .catch((error) => {
-          console.error("💥 STATISTIC Error:", error)
-        })
-    }
+    return { statisticData }
   }
 }
 </script>

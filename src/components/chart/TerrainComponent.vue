@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-soft-light p-2" style="border-radius: 10px; max-height: 500">
+  <div class="p-2" style="border-radius: 10px; max-height: 500; background: #146ec833">
     <apexchart type="pie" :options="chartCategory.chartOptions" :series="chartCategory.series" :height="305" style="width: 500"></apexchart>
   </div>
 </template>
@@ -10,72 +10,53 @@ import axios from "axios"
 import AOS from "aos"
 
 export default {
-  data() {
-    return {
-      terrainData: [],
-      terrainChart: []
-    }
-  },
+  name: "TerrainChart",
 
   setup() {
+    const terrainData = ref([])
     const chartCategory = ref({
       series: [],
       chartOptions: {
-        chart: {
-          type: "pie"
-        },
-        legend: {
-          position: "bottom"
-        },
+        chart: { type: "pie" },
+        legend: { position: "bottom" },
         labels: ["Darat", "Air"],
-        tooltip: {
-          x: {
-            show: true
-          }
-        },
+        tooltip: { x: { show: true } },
         colors: ["#632e24", "#3399FF"]
       }
     })
 
     onMounted(() => {
       AOS.init({
-        disable: function () {
-          var maxWidth = 996
-          return window.innerWidth < maxWidth
-        },
+        disable: () => window.innerWidth < 996,
         once: true,
         duration: 800
       })
+      fetchTerrainChart()
     })
-    return { chartCategory }
-  },
 
-  mounted() {
-    this.fetchTerrainChart()
-  },
+    // Fetch data for chart
+    const fetchTerrainChart = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const config = { headers: { Authorization: `Bearer ${token}` } }
+        const response = await axios.get("/api/v1/dashboard/terrain-chart", config)
+        terrainData.value = response.data.data
 
-  methods: {
-    async fetchTerrainChart() {
-      const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
-      await axios
-        .get("/api/v1/dashboard/terrain-chart", config)
-        .then((response) => {
-          this.terrainData = response.data.data
+        const dataArray = Object.values(terrainData.value)
+        console.log("💚 TERRAIN CHART", dataArray)
 
-          const dataArray = Object.values(this.terrainData)
-          console.log("💚 TERRAIN CHART", dataArray)
-
-          this.chartCategory = {
-            series: dataArray,
-            chartOptions: {
-              labels: ["Darat", "Air"]
-            }
+        chartCategory.value = {
+          series: dataArray,
+          chartOptions: {
+            labels: ["Darat", "Air"]
           }
-        })
-        .catch((error) => {
-          console.error("💥 TERRAIN CHART Error:", error)
-        })
+        }
+      } catch (error) {
+        console.error("💥 TERRAIN CHART Error:", error)
+      }
     }
+
+    return { chartCategory }
   }
 }
 </script>
