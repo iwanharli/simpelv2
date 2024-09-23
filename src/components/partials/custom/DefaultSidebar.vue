@@ -1,7 +1,7 @@
 <template>
   <aside id="first-tour" :class="`sidebar sidebar-base ${sidebarColor} ${sidebarMenuStyle} ${sidebarType.join(' ')}`" data-toggle="main-sidebar" data-sidebar="responsive" style="z-index: 2000 !important">
     <div class="sidebar-header d-flex align-items-center justify-content-start">
-      <router-link :to="{ name: 'admin.dashboard' }" class="navbar-brand" style="margin-left: 5px">
+      <router-link :to="{ name: 'admin.dashboard' }" class="navbar-brand" style="margin-left: 3px">
         <img class="logo" src="@/assets/app/s-logo.svg" />
         <div class="logo-title">
           <h4 class="title mt-1" style="">IMPEL</h4>
@@ -10,7 +10,7 @@
       </router-link>
       <div class="sidebar-toggle" @click="toggleSidebar">
         <i class="icon-custom p-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-baseline-density-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-baseline-density-medium">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M4 20h16" />
             <path d="M4 12h16" />
@@ -60,9 +60,31 @@ export default {
 </script>
 
 <style>
+.sidebar {
+  position: absolute;
+  top: 12%;
+  left: 10px;
+  bottom: auto;
+  border-radius: 20px 20px 30px 20px;
+  background: rgba(255, 255, 255, 0.56);
+}
+
 .sidebar-header {
-  background: #2b397e;
-  /* border-radius: 20px; */
+  background: #2366ca;
+  border-radius: 20px 20px 0px 0px;
+  border-bottom: 4px solid white !important;
+}
+
+.sidebar .sidebar-toggle {
+  top: 32.5px;
+  right: -41.5px;
+  border-radius: 0px 10px 10px 0px;
+  padding: 7px;
+  border-top: 2px solid white;
+  border-bottom: 4px solid white;
+  border-right: 3px solid white;
+  border-left: none;
+  background: #134a9b;
 }
 
 .sidebar-header img {

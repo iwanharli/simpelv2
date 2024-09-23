@@ -88,8 +88,8 @@ export default {
   data() {
     return {
       stats: [],
-      // center: { lat: -6.846155, lng: 109.128892 }, 
-      center: { lat: -6.097643, lng: 106.802428 }, 
+      // center: { lat: -6.846155, lng: 109.128892 },
+      center: { lat: -6.097643, lng: 106.802428 },
       shipArrival: [],
 
       leaflet_map: null,
@@ -211,8 +211,19 @@ export default {
         if (this.leaflet_markers.hasOwnProperty(ship.ship_id)) {
           // Jika marker sudah ada, perbarui posisinya
           this.leaflet_markers[ship?.ship_id].setLatLng([ship?.geo[1], ship?.geo[0]])
+          const timestamp = new Date().toLocaleString()
 
-          console.log("> UP MARKER \t", ship.ship_id, "🚥", ship.ship_name, "🚥", ship.device_id, "🚥", ship.geo, "\n> ON GROUND \t", ship.on_ground, "\n> IS UPDATE \t", ship.is_update)
+          // SHIP WS INFO -------------------------------------------------------
+          console.log(`> UPDATE MARKER 🚥🚥🚥
+          Time: ${timestamp}
+          Ship ID: ${ship.ship_id}
+          Ship Name: ${ship.ship_name}
+          Device ID: ${ship.device_id}
+          Coordinates: [Lat: ${ship.geo[1]}, Lng: ${ship.geo[0]}]
+          On Ground: ${ship.on_ground ? "Yes" : "No"}
+          Is Update: ${ship.is_update ? "Yes" : "No"}
+          `)
+          // SHIP WS INFO --------------------------------------------------------
         } else {
           // Jika marker belum ada, buat marker baru dan tambahkan ke LayerGroup
           var iconKapal = L.icon({

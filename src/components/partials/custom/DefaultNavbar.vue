@@ -1,13 +1,13 @@
 <template>
+  <!-- <nav :class="`nav navbar navbar-expand-xl navbar-light iq-navbar ${headerNavbar} ${navbarHide.join('')}`"> -->
   <nav :class="`nav navbar navbar-expand-md navbar-light iq-navbar ${headerNavbar}`">
-    <!-- <nav :class="`nav navbar navbar-expand-xl navbar-light iq-navbar ${headerNavbar} ${navbarHide.join('')}`"> -->
     <div class="container-fluid navbar-inner">
       <slot></slot>
       <div></div>
 
       <!-- LOGO  -->
       <div class="navbar-brand">
-        <img src="@/assets/app/s-logo.svg" style="width: 50px; height: 50px" />
+        <!-- <img src="@/assets/app/s-logo.svg" style="width: 50px; height: 50px" /> -->
       </div>
 
       <div id="navbarSupportedContent">
@@ -132,6 +132,9 @@
             <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="navbarDropdown">
               <!-- <li><router-link class="dropdown-item" :to="{ name: 'admin.dashboard' }">Profile</router-link></li>
               <li><hr class="dropdown-divider" /></li> -->
+              <li class="custom-profile bg-primary mb-1" style="border-radius: 10px">
+                <a href="#" class="dropdown-item logout text-white" style="font-weight: bolder; padding: 10px" @click="logout()">Profil</a>
+              </li>
               <li class="custom-logout bg-danger" style="border-radius: 10px">
                 <a href="#" class="dropdown-item logout text-white" style="font-weight: bolder; padding: 10px" @click="logout()">Logout</a>
               </li>
@@ -265,19 +268,51 @@ export default {
 </script>
 
 <style>
+nav.navbar {
+  position: absolute !important;
+  top: 20px;
+  right: 20px;
+  border-radius: 50px 20px 20px 50px;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); /* Adjust shadow values as needed */
+}
+
+.nav .navbar-inner {
+  padding: 0 !important;
+  padding-left: 20px !important;
+  padding-right: 10px !important;
+}
+
+.nav-link {
+  border-radius: 1.25rem !important;
+}
+
+.iq-navbar .dropdown .dropdown-menu[data-bs-popper] {
+  background: #aadbfc;
+  padding: 5px !important;
+}
+
+.dropdown-menu {
+  /* border: 3px solid white; */
+  top: 100%;
+  border-radius: 10px;
+}
+
+.dropdown-item {
+  border-radius: 30px;
+}
+
 .nav-item.dropdown.user-profile-custom {
   padding: 5px;
 }
 
 .nav-item.dropdown.user-profile-custom:hover {
-  background: rgba(128, 128, 128, 0.278) !important;
+  background: rgba(255, 255, 255, 0.3) !important;
   border-radius: 10px;
 }
 
-.dropdown-menu {
-  border: 3px solid white;
-  top: 100%;
-  border-radius: 10px;
+.custom-profile:hover {
+  background: #2a41b3 !important;
 }
 
 .custom-logout:hover {
@@ -301,7 +336,7 @@ export default {
 }
 
 .notification-count {
-  background-color: #ff0000; /* Set the background color */
+  background-color: #d45d5d; /* Set the background color */
   color: #ffffff; /* Set the text color */
   font-size: 12px; /* Set the font size */
   padding: 3px 6px; /* Set padding for better appearance */

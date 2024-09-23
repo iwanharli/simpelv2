@@ -3,7 +3,7 @@
 
   <sidebar-component></sidebar-component>
 
-  <main class="main-content" style="background: transparent !important;">
+  <main class="main-content" style="background: transparent !important">
     <div :class="`position-relative  ${isBanner ? 'iq-banner ' + bannerStyle : ''}`">
       <header-component></header-component>
       <template v-if="isBanner">
@@ -12,7 +12,13 @@
     </div>
 
     <main-content-component>
-      <router-view></router-view>
+      <div style="padding: 0px !important">
+        <!-- <div style="height: 100vh; width: 100%; background: #00000054; position: absolute; left: 0"> -->
+        <!-- <map-dashboard-3> -->
+        <router-view></router-view>
+        <!-- </map-dashboard-3> -->
+        <!-- </div> -->
+      </div>
     </main-content-component>
 
     <!-- <footer-component></footer-component> -->
@@ -34,6 +40,7 @@ import MainContentComponent from "@/components/partials/MainContentComponent.vue
 import SettingOffcanvas from "@/components/partials/setting/SettingOffcanvas.vue"
 import LoaderComponent from "@/components/partials/LoaderComponent.vue"
 import FooterComponent from "@/components/partials/FooterComponent.vue"
+import MapDashboard3 from "@/components/map/MapDashboard3.vue"
 
 const route = useRoute()
 const store = useStore()
