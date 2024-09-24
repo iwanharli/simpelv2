@@ -3,7 +3,7 @@
     <!-- MAP DETAIL  -->
     <b-col xl="12" class="bg-transparent" v-if="shipCurLat !== 0">
       <div style="border-radius: 20px; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5); border: 2px solid white">
-        <MapDetail :shipCurLat="shipCurLat" :shipCurLong="shipCurLong" :shipOnGround="shipOnGround" :location-logs="locationLogs" v-if="shipCurLat && shipCurLong" />
+        <MapDetail :shipCurLat="shipCurLat" :shipCurLong="shipCurLong" :shipOnGround="shipOnGround" :location-logs="locationLogs" :shipName="ship.ship_name" :ownerName="shipBio.owner_name" :responsibleName="ship.responsible_name" :status="ship.status" :openToastEditShipName="editShipName" v-if="shipCurLat && shipCurLong" />
 
         <div xl="12" class="bg-soft-danger d-flex align-items-center justify-content-center p-4 pt-5" style="border-radius: 20px; flex-direction: column; gap: 20px" v-if="!shipCurLat || !shipCurLong">
           <img src="@/assets/images/nf.png" class="next" style="width: 60px; height: 60px" />
@@ -16,14 +16,40 @@
   <!-- DETAIL KAPAL  -->
   <div class="row p-5 pt-3 pb-2">
     <b-col class="col-lg-3 col-md-6">
-      <b-card style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5); border-radius: 1px solid blue">
+      <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5); border-radius: 1px solid blue" @click="editShipName(ship.ship_name)">
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
             <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/ship.png" loading="lazy" />
           </div>
           <div class="text-end">
             Nama Kapal
-            <h4>{{ formatShipStatus(ship.ship_name) }}</h4>
+            <h5 style="font-weight: bold">{{ formatShipStatus(ship.ship_name) || "DATA KOSONG" }}</h5>
+          </div>
+        </div>
+      </b-card>
+    </b-col>
+    <b-col class="col-lg-3 col-md-6">
+      <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" @click="editShipOwner(shipBio.owner_name)">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/owner.png" loading="lazy" />
+          </div>
+          <div class="text-end">
+            Pemilik
+            <h6 style="font-weight: bold">{{ formatShipStatus(shipBio.owner_name) || "DATA KOSONG" }}</h6>
+          </div>
+        </div>
+      </b-card>
+    </b-col>
+    <b-col class="col-lg-3 col-md-6">
+      <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" @click="editShipResponsible(ship.responsible_name)">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/responsible.png" loading="lazy" />
+          </div>
+          <div class="text-end">
+            Penanggung Jawab
+            <h6 style="font-weight: bold">{{ formatShipStatus(ship.responsible_name) || "DATA KOSONG" }}</h6>
           </div>
         </div>
       </b-card>
@@ -36,41 +62,22 @@
           </div>
           <div class="text-end">
             Status <br />
-            <div class="badge bg-primary p-2" style="text-transform: capitalize" v-if="ship.status === 'checkin'">
-              <span>{{ ship.status }}</span>
+            <div v-if="ship.status">
+              <div class="badge bg-primary p-2" style="text-transform: capitalize" v-if="ship.status === 'checkin'">
+                <span>{{ ship.status }}</span>
+              </div>
+              <div class="badge bg-info p-2" style="text-transform: capitalize" v-else-if="ship.status === 'checkout'">
+                <span>{{ ship.status }}</span>
+              </div>
+              <div class="badge bg-warning p-2" style="text-transform: capitalize" v-else-if="ship.status === 'out of scope'">
+                <span>{{ ship.status }}</span>
+              </div>
             </div>
-            <div class="badge bg-info p-2" style="text-transform: capitalize" v-else-if="ship.status === 'checkout'">
-              <span>{{ ship.status }}</span>
+            <div v-else>
+              <div class="badge bg-secondary p-2" style="text-transform: capitalize">
+                <span>DATA KOSONG</span>
+              </div>
             </div>
-            <div class="badge bg-warning p-2" style="text-transform: capitalize" v-else-if="ship.status === 'out of scope'">
-              <span>{{ ship.status }}</span>
-            </div>
-          </div>
-        </div>
-      </b-card>
-    </b-col>
-    <b-col class="col-lg-3 col-md-6">
-      <b-card style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center">
-            <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/owner.png" loading="lazy" />
-          </div>
-          <div class="text-end">
-            Pemilik
-            <h6 style="font-weight: bold">{{ formatShipStatus(shipBio.owner_name) }}</h6>
-          </div>
-        </div>
-      </b-card>
-    </b-col>
-    <b-col class="col-lg-3 col-md-6">
-      <b-card style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center">
-            <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/responsible.png" loading="lazy" />
-          </div>
-          <div class="text-end">
-            Penanggung Jawab
-            <h6 style="font-weight: bold">{{ formatShipStatus(ship.responsible_name) }}</h6>
           </div>
         </div>
       </b-card>
@@ -90,7 +97,9 @@
                 <small class="text-light" style="font-weight: normal">Memuat informasi tentang detail teknis kapal</small>
               </div>
               <div>
-                <button class="btn btn-sm btn-secondary text-white" style="margin-left: auto" type="button" data-bs-toggle="modal" data-bs-target="#modalEditDetailKapal"><i class="ti ti-adjustments-alt"></i> EDIT</button>
+                <button class="btn btn-sm btn-warning text-light" style="margin-left: auto; height: 70%" type="button" data-bs-toggle="modal" data-bs-target="#modalEditDetailSpesifikasiKapal">
+                  <i class="ti ti-adjustments-alt"></i>
+                </button>
               </div>
             </div>
             <div class="card-body p-2">
@@ -98,9 +107,9 @@
                 <table id="basic-table" class="table table-hover mb-0" role="grid">
                   <tbody>
                     <tr>
-                      <td>
+                      <td style="width: 40%">
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/01.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/10.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6 style="font-weight: bold; text-transform: uppercase">Jenis</h6>
                         </div>
                       </td>
@@ -109,7 +118,7 @@
                     <tr>
                       <td>
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/01.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/11.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6><span style="font-weight: bold; text-transform: uppercase">Dimensi </span><small>(m)</small></h6>
                         </div>
                       </td>
@@ -118,7 +127,7 @@
                     <tr>
                       <td>
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/01.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/12.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6 style="font-weight: bold; text-transform: uppercase">GT</h6>
                         </div>
                       </td>
@@ -127,7 +136,7 @@
                     <tr>
                       <td>
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/01.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/08.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6 style="font-weight: bold; text-transform: uppercase">NOMOR GPS</h6>
                         </div>
                       </td>
@@ -136,7 +145,7 @@
                     <tr>
                       <td style="border-bottom: none">
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/01.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/07.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6 style="font-weight: bold; text-transform: uppercase">IMEI</h6>
                         </div>
                       </td>
@@ -157,16 +166,21 @@
                 <h4 class="card-title" style="font-weight: bold; color: white">PELABUHAN</h4>
                 <small class="text-light" style="font-weight: normal">Memuat informasi tentang pelabuhan</small>
               </div>
+              <div>
+                <button class="btn btn-sm btn-warning text-light" style="margin-left: auto; height: 70%" type="button" data-bs-toggle="modal" data-bs-target="#modalEditDetailPelabuhanKapal">
+                  <i class="ti ti-adjustments-alt"></i>
+                </button>
+              </div>
             </div>
             <div class="card-body p-2">
               <div class="table-responsive">
                 <table id="basic-table" class="table table-hover mb-0" role="grid">
                   <tbody>
                     <tr>
-                      <td>
+                      <td style="width: 40%">
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/04.png" alt="profile" loading="lazy" />
-                          <h6 style="font-weight: bold; text-transform: uppercase">Pelabuhan Pangkalan</h6>
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/09.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
+                          <h6 style="font-weight: bold; text-transform: uppercase">Pelabuhan</h6>
                         </div>
                       </td>
                       <td>{{ formatShipStatus(shipBio.harbour) }}</td>
@@ -174,7 +188,7 @@
                     <tr>
                       <td style="border-bottom: none">
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/04.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/13.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6 style="font-weight: bold; text-transform: uppercase">Tanda Selar</h6>
                         </div>
                       </td>
@@ -195,15 +209,20 @@
                 <h4 class="card-title" style="font-weight: bold; color: white">LEGALITAS</h4>
                 <small class="text-light" style="font-weight: normal">Memuat informasi tentang data hukum kapal</small>
               </div>
+              <div>
+                <button class="btn btn-sm btn-warning text-light" style="margin-left: auto; height: 70%" type="button" data-bs-toggle="modal" data-bs-target="#modalEditDetailLegalitasKapal">
+                  <i class="ti ti-adjustments-alt"></i>
+                </button>
+              </div>
             </div>
             <div class="card-body p-2">
               <div class="table-responsive">
                 <table id="basic-table" class="table table-hover mb-0" role="grid">
                   <tbody>
                     <tr>
-                      <td>
+                      <td style="width: 40%">
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/06.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/14.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6 style="font-weight: bold; text-transform: uppercase">Nomor SIUP</h6>
                         </div>
                       </td>
@@ -212,7 +231,7 @@
                     <tr>
                       <td>
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/06.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/15.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6 style="font-weight: bold; text-transform: uppercase">Nomor BKP</h6>
                         </div>
                       </td>
@@ -221,7 +240,7 @@
                     <tr>
                       <td style="border-bottom: none">
                         <div class="d-flex align-items-center">
-                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary" src="@/assets/images/shapes/06.png" alt="profile" loading="lazy" />
+                          <img class="rounded img-fluid avatar-40 me-3 bg-soft-primary p-1" src="@/assets/images/shapes/16.png" style="border: 2px solid #2366ca" alt="profile" loading="lazy" />
                           <h6 style="font-weight: bold; text-transform: uppercase">Terdaftar</h6>
                         </div>
                       </td>
@@ -283,7 +302,9 @@
     </div>
   </div>
 
-  <modalEditKapal />
+  <ModalEditSpesifikasiKapal :onUpdateComplete="getShipDetail" />
+  <ModalEditPelabuhanKapal :onUpdateComplete="getShipDetail" />
+  <ModalEditLegalitasKapal :onUpdateComplete="getShipDetail" />
 </template>
 
 <script>
@@ -293,14 +314,18 @@ import AOS from "aos"
 import { onMounted, ref } from "vue"
 
 import MapDetail from "@/components/map/MapShipDetail.vue"
-import ModalEditKapal from "@/components/modal/EditDetailKapal.vue"
+import ModalEditSpesifikasiKapal from "@/components/modal/EditDetailSpesifikasiKapal.vue"
+import ModalEditPelabuhanKapal from "@/components/modal/EditDetailPelabuhanKapal.vue"
+import ModalEditLegalitasKapal from "@/components/modal/EditDetailLegalitasKapal.vue"
 
 export default {
   name: "detailKapal",
 
   components: {
     MapDetail,
-    ModalEditKapal
+    ModalEditSpesifikasiKapal,
+    ModalEditPelabuhanKapal,
+    ModalEditLegalitasKapal
   },
 
   data() {
@@ -313,13 +338,18 @@ export default {
       locationLogs: [],
       shipCurLat: null,
       shipCurLong: null,
-      shipOnGround: null
+      shipOnGround: null,
+
+      dockLogInterval: null,
+      locationLogInterval: null
     }
   },
 
   created() {
     const shipDetailId = this.$route.params.shipId
-    this.getShipDetail(shipDetailId), this.getDockLogs(shipDetailId), this.getLocationLogs(shipDetailId)
+    this.getShipDetail(shipDetailId)
+    this.getDockLogs(shipDetailId)
+    this.getLocationLogs(shipDetailId)
   },
 
   methods: {
@@ -340,17 +370,11 @@ export default {
           this.shipCurLong = this.ship.current_long
           this.shipOnGround = this.ship.on_ground
 
-          console.log("💚 SHIP DETAIL :", shipDetailId, this.ship)
+          console.log("💚 GET SHIP DETAIL__ :", shipDetailId, this.ship)
 
           // console.log("asd", this.shipCurLat, this.shipCurLong)
         })
         .catch((error) => {
-          // Swal.fire({
-          //   title: "Error!",
-          //   text: "Mencoba lagi dalam 5 detik",
-          //   icon: "error",
-          // })
-
           console.log("Get ship detail failure. Retrying in 5 seconds...", error)
 
           // setTimeout(() => {
@@ -366,24 +390,30 @@ export default {
       await axios
         .get(`/api/v1/ship/dock-log/${shipDetailId}`, config)
         .then((res) => {
-          this.dockLogs = res.data.data.docking_logs
+          // Check if docking_logs is not null and is an array
+          if (Array.isArray(res.data.data.docking_logs)) {
+            this.dockLogs = res.data.data.docking_logs.map((log) => {
+              const date = new Date(log.created_at)
+              const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-          this.dockLogs = res.data.data.docking_logs.map((log) => {
-            const date = new Date(log.created_at)
-            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+              const formattedDate = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 
-            const formattedDate = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+              return {
+                ...log,
+                formattedDate: formattedDate
+              }
+            })
+          } else {
+            // If docking_logs is null or not an array, assign it to an empty array
+            this.dockLogs = []
+            console.warn("No docking logs found.")
+          }
 
-            return {
-              ...log,
-              formattedDate: formattedDate
-            }
-          })
-
-          console.log("💚 DOCK LOGS >", this.dockLogs)
+          const timestamp = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+          console.log(`💚 GET DOCK LOGS__ @ ${timestamp}`)
         })
         .catch((error) => {
-          console.log("💚 DOCK LOGS >", this.dockLogs)
+          console.error("💥 DOCK LOGS GAGAL UPDATE :", error)
         })
     },
 
@@ -395,11 +425,194 @@ export default {
         .then((res) => {
           this.locationLogs = res.data.data.location_logs
 
-          console.log("💚 LOCATION LOGS >", this.locationLogs)
+          const timestamp = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+          console.log(`💚 GET LOCATION LOGS__ @ ${timestamp}`)
         })
         .catch((error) => {
-          console.error("💥 LOCATION LOGS GAGAL :", error)
+          console.error("💥 LOCATION LOGS GAGAL UPDATE :", error)
         })
+    },
+
+    // EDIT
+    async editShipName(shipName) {
+      const { value: newShipName } = await Swal.fire({
+        title: "Edit Nama Kapal",
+        input: "text",
+        inputLabel: "Masukkan Nama Kapal Baru",
+        inputValue: shipName,
+        inputAttributes: {
+          disabled: true
+        },
+        showCancelButton: true,
+        confirmButtonText: "Simpan",
+        cancelButtonText: "Batal",
+        inputValidator: (value) => {
+          if (!value) {
+            return "Nama kapal tidak boleh kosong!"
+          }
+        }
+      })
+
+      if (newShipName) {
+        const dataToUpdate = {
+          ship_id: this.ship.id,
+          type: this.ship.detail.type,
+          dimension: this.ship.detail.dimension,
+          harbour: this.ship.detail.harbour,
+          siup: this.ship.detail.siup,
+          bkp: this.ship.detail.bkp,
+          selar_mark: this.ship.detail.selar_mark,
+          gt: this.ship.detail.gt,
+          owner_name: this.ship.detail.owner_name,
+          iot_phone: this.ship.detail.iot_phone
+        }
+
+        const url = `/api/v1/ship/update-detail`
+
+        try {
+          const res = await axios.put(url, dataToUpdate, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token")
+            }
+          })
+
+          if (res.status === 200) {
+            Swal.fire({
+              icon: "success",
+              title: "Berhasil",
+              text: `Nama kapal telah diperbarui menjadi ${newShipName}`
+            })
+
+            await this.getShipDetail(this.ship.id) // Call to refresh data
+          }
+        } catch (error) {
+          console.error("Error updating ship details:", error)
+          Swal.fire({
+            icon: "error",
+            title: "Terjadi Kesalahan",
+            text: "Gagal memperbarui nama kapal."
+          })
+        }
+      }
+    },
+
+    async editShipOwner(shipOwner) {
+      const { value: newShipOwner } = await Swal.fire({
+        title: "Edit Pemilik Kapal",
+        input: "text",
+        inputLabel: "Masukkan Nama Pemilik Baru",
+        inputValue: shipOwner,
+        showCancelButton: true,
+        confirmButtonText: "Simpan",
+        cancelButtonText: "Batal",
+        inputValidator: (value) => {
+          if (!value) {
+            return "Nama tidak boleh kosong!"
+          }
+        }
+      })
+
+      if (newShipOwner) {
+        const dataToUpdate = {
+          ship_id: this.ship.id,
+          type: this.ship.detail.type,
+          dimension: this.ship.detail.dimension,
+          harbour: this.ship.detail.harbour,
+          siup: this.ship.detail.siup,
+          bkp: this.ship.detail.bkp,
+          selar_mark: this.ship.detail.selar_mark,
+          gt: this.ship.detail.gt,
+          owner_name: newShipOwner,
+          iot_phone: this.ship.detail.iot_phone
+        }
+
+        const url = `/api/v1/ship/update-detail`
+
+        try {
+          const res = await axios.put(url, dataToUpdate, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token")
+            }
+          })
+
+          // Show success message
+          if (res.status === 200) {
+            Swal.fire({
+              icon: "success",
+              title: "Berhasil",
+              text: `Nama telah diperbarui menjadi ${newShipOwner}`
+            })
+
+            await this.getShipDetail(this.ship.id) // Call to refresh data
+          }
+        } catch (error) {
+          console.error("Error updating ship details:", error)
+          Swal.fire({
+            icon: "error",
+            title: "Terjadi Kesalahan",
+            text: "Gagal memperbarui nama pemilik kapal."
+          })
+        }
+      }
+    },
+
+    async editShipResponsible(shipResponsible) {
+      const { value: newShipResponsible } = await Swal.fire({
+        title: "Edit Pemilik Kapal",
+        input: "text",
+        inputLabel: "Masukkan Nama Pemilik Baru",
+        inputValue: shipResponsible,
+        showCancelButton: true,
+        confirmButtonText: "Simpan",
+        cancelButtonText: "Batal",
+        inputValidator: (value) => {
+          if (!value) {
+            return "Nama tidak boleh kosong!"
+          }
+        }
+      })
+
+      if (newShipResponsible) {
+        const dataToUpdate = {
+          ship_id: this.ship.id,
+          type: this.ship.detail.type,
+          dimension: this.ship.detail.dimension,
+          harbour: this.ship.detail.harbour,
+          siup: this.ship.detail.siup,
+          bkp: this.ship.detail.bkp,
+          selar_mark: this.ship.detail.selar_mark,
+          gt: this.ship.detail.gt,
+          owner_name: this.ship.detail.owner_name,
+          iot_phone: this.ship.detail.iot_phone
+        }
+
+        const url = `/api/v1/ship/update-detail`
+
+        try {
+          const res = await axios.put(url, dataToUpdate, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token")
+            }
+          })
+
+          if (res.status === 200) {
+            Swal.fire({
+              icon: "success",
+              title: "Berhasil",
+              text: `Nama telah diperbarui menjadi ${newShipResponsible}`
+            })
+
+            await this.getShipDetail(this.ship.id)
+          }
+        } catch (error) {
+          console.error("Error updating ship details:", error)
+          Swal.fire({
+            icon: "error",
+            title: "Terjadi Kesalahan",
+            text: "Gagal memperbarui nama penanggung jawab."
+          })
+        }
+      }
     },
 
     // STYLING
@@ -439,6 +652,18 @@ export default {
 </script>
 
 <style>
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.hover-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 8px 20px rgba(83, 83, 83, 0.5);
+  background: rgb(35 102 202 / 40%);
+  color: white;
+}
+
 .scrollbar::-webkit-scrollbar {
   width: 10px;
 }

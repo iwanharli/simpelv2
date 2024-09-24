@@ -1,9 +1,9 @@
 <template>
-  <div style="position: relative; height: 800px">
-    <div id="map" style="height: 100%; width: 100%; border-radius: 20px; z-index: 0"></div>
+  <div style="position: relative; height: 70vh">
+    <div id="mapDetail" style="height: 100%; width: 100%; border-radius: 20px; z-index: 0"></div>
 
-    <div class="col-xl-6 col-md-6 cols-sm-12 mx-auto" style="position: absolute; top: 92%; left: 50%; transform: translate(-50%, -50%); z-index: 1">
-      <div class="row" style="background-color: #83838357; padding: 10px; border-radius: 10px; border: 1px solid white;">
+    <div class="col-xl-6 col-md-6 cols-sm-12 mx-auto" style="position: absolute; top: 93%; left: 50%; transform: translate(-50%, -50%); z-index: 1">
+      <div class="row" style="background-color: #83838357; padding: 10px; border-radius: 10px; border: 1px solid white">
         <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12">
           <div class="input-group input-daterange" id="bs-datepicker-daterange">
             <input type="date" placeholder="MM/DD/YYYY" class="form-control" v-model="dateStart" />
@@ -16,6 +16,77 @@
           <button class="btn btn-warning d-grid w-100" type="submit" @click="filterHistory()">Lihat History</button>
         </div>
       </div>
+    </div>
+
+    <!-- DETAIL KAPAL  -->
+    <div class="row p-4" style="position: absolute; top: 92%; left: 51%; width: 100%; transform: translate(-50%, -50%); z-index: 1; display: none;">
+      <b-col class="col-lg-3 col-md-6">
+        <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5); border-radius: 1px solid blue" @click="editShipName(shipName)">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/ship.png" loading="lazy" />
+            </div>
+            <div class="text-end">
+              Nama Kapal
+              <h5 style="font-weight: bold">{{ shipName || "DATA KOSONG" }}</h5>
+            </div>
+          </div>
+        </b-card>
+      </b-col>
+      <b-col class="col-lg-3 col-md-6">
+        <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" @click="editShipOwner(ownerName)">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/owner.png" loading="lazy" />
+            </div>
+            <div class="text-end">
+              Pemilik
+              <h6 style="font-weight: bold">{{ ownerName || "DATA KOSONG" }}</h6>
+            </div>
+          </div>
+        </b-card>
+      </b-col>
+      <b-col class="col-lg-3 col-md-6">
+        <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" @click="editShipResponsible(responsibleName)">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/responsible.png" loading="lazy" />
+            </div>
+            <div class="text-end">
+              Penanggung Jawab
+              <h6 style="font-weight: bold">{{ responsibleName || "DATA KOSONG" }}</h6>
+            </div>
+          </div>
+        </b-card>
+      </b-col>
+      <b-col class="col-lg-3 col-md-6">
+        <b-card style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/status.png" loading="lazy" />
+            </div>
+            <div class="text-end">
+              Status <br />
+              <div v-if="status">
+                <div class="badge bg-primary p-2" style="text-transform: capitalize" v-if="status === 'checkin'">
+                  <span>{{ status }}</span>
+                </div>
+                <div class="badge bg-info p-2" style="text-transform: capitalize" v-else-if="status === 'checkout'">
+                  <span>{{ status }}</span>
+                </div>
+                <div class="badge bg-warning p-2" style="text-transform: capitalize" v-else-if="status === 'out of scope'">
+                  <span>{{ status }}</span>
+                </div>
+              </div>
+              <div v-else>
+                <div class="badge bg-secondary p-2" style="text-transform: capitalize">
+                  <span>DATA KOSONG</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </b-card>
+      </b-col>
     </div>
   </div>
 </template>
@@ -33,6 +104,31 @@ import L from "leaflet"
 
 export default {
   name: "MapShipDetail",
+
+  props: {
+    shipCurLat: Number,
+    shipCurLong: Number,
+    shipOnGround: Number,
+    locationLogs: Number,
+    shipName: {
+      type: String,
+      required: true
+    },
+    ownerName: {
+      type: String,
+      required: true
+    },
+    responsibleName: {
+      type: String,
+      required: true
+    },
+    status: {
+      type: String,
+      required: true
+    },
+
+    openToastEditShipName: Function
+  },
 
   data() {
     // Function to format date as YYYY-MM-DD
@@ -57,13 +153,6 @@ export default {
     }
   },
 
-  props: {
-    shipCurLat: Number,
-    shipCurLong: Number,
-    shipOnGround: Number,
-    locationLogs: Number
-  },
-
   mounted() {
     this.getGeofence(),
       setTimeout(() => {
@@ -82,32 +171,24 @@ export default {
         .then((res) => {
           this.geofence = res.data.data.geofences
           this.fixGeofence = this.geofence.map((item) => [parseFloat(item.lat), parseFloat(item.long)])
+
+          console.log("💚 GET GEOFENCE__")
         })
         .catch((error) => {
-          console.log("Get geofence failure. Retrying in 1 seconds...", error)
+          console.log("💥 FAILED GET GEOFENCE")
           return
         })
-
-      // console.error(this.shipCurLat, "|| ", this.shipCurLong)
     },
 
     async mapShipDetail() {
       if (this.fixGeofence && !this.leaflet_map) {
-        const mapElement = document.getElementById("map")
-        if (!mapElement) {
-          console.error("Map element not found in the document.")
-          return
-        }
-
-        this.leaflet_map = await L.map("map", { zoomControl: true, zoom: 1, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false }).setView([this.shipCurLat, this.shipCurLong], 18)
+        this.leaflet_map = await L.map("mapDetail", { zoomControl: true, zoom: 1, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false }).setView([this.shipCurLat, this.shipCurLong], 18)
 
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxNativeZoom: 19,
           maxZoom: 30,
           minZoom: 5
         }).addTo(this.leaflet_map)
-
-        console.log("GEOFENCE >", this.fixGeofence)
 
         var polygon = L.polygon(this.fixGeofence, {
           color: "#7367F0",
@@ -134,7 +215,7 @@ export default {
         var icon = this.shipOnGround === 1 ? iconNelayan : iconKapal
         this.shipMarker = L.marker([this.shipCurLat, this.shipCurLong], { icon: icon }).addTo(this.leaflet_map)
 
-        console.log(">", this.shipMarker)
+        // console.log(">", this.shipMarker)
       } else if (this.leaflet_map) {
         this.leaflet_map.flyTo([this.shipCurLat, this.shipCurLong], 18, {
           duration: 3
@@ -262,6 +343,10 @@ export default {
       if (this.polyline) {
         this.leaflet_map.removeLayer(this.polyline)
       }
+    },
+
+    editShipName(shipName){
+      this.openToastEditShipName(shipname)
     }
   }
 }

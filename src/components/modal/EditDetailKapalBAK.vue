@@ -1,48 +1,14 @@
 <template>
-  <div class="modal fade" id="modalEditDetailKapal" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none">
+  <div class="modal fade" id="modalEditDetailSpesifikasiKapal" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header bg-primary">
-          <h4 class="modal-title text-white" style="font-weight: bold">EDIT DETAIL KAPAL</h4>
+          <h4 class="modal-title text-white" style="font-weight: bold">EDIT SPESIFIKASI KAPAL</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form @submit.prevent="updateShipDetail">
             <div class="modal-body">
-              <div class="row">
-                <div class="col mb-4">
-                  <label class="form-label" style="font-weight: bolder">Nama Kapal</label>
-                  <input type="text" id="shipName" class="form-control" v-model="ship.ship_name" disabled/>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col mb-4">
-                  <label class="form-label" style="font-weight: bolder">Nomor IOT</label>
-                  <input type="text" id="shipIOT" class="form-control" v-model="shipIOT" />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col mb-4">
-                  <label class="form-label" style="font-weight: bolder">Pemilik Kapal</label>
-                  <input type="text" id="shipOwner" class="form-control" v-model="shipOwner" />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col mb-4">
-                  <label class="form-label" style="font-weight: bolder">Penanggung Jawab</label>
-                  <input type="text" class="form-control" v-model="ship.responsible_name" disabled/>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col mb-4">
-                  <label class="form-label" style="font-weight: bolder">Pelabuhan Pangkalan</label>
-                  <input type="text" class="form-control" v-model="shipHarbour" />
-                </div>
-                <div class="col mb-4">
-                  <label class="form-label" style="font-weight: bolder">GT</label>
-                  <input type="text" class="form-control" v-model="shipGT" />
-                </div>
-              </div>
               <div class="row">
                 <div class="col mb-4">
                   <label class="form-label" style="font-weight: bolder">Jenis Kapal</label>
@@ -63,6 +29,41 @@
                     </div>
                     <input type="text" class="form-control" v-model="shipLength" />
                   </div>
+                </div>
+              </div>
+
+              <div class="row d-none">
+                <div class="col mb-4">
+                  <label class="form-label" style="font-weight: bolder">Nama Kapal</label>
+                  <input type="text" id="shipName" class="form-control" v-model="ship.ship_name" disabled />
+                </div>
+              </div>
+              <div class="row d-none">
+                <div class="col mb-4">
+                  <label class="form-label" style="font-weight: bolder">Nomor IOT</label>
+                  <input type="text" id="shipIOT" class="form-control" v-model="shipIOT" />
+                </div>
+              </div>
+              <div class="row d-none">
+                <div class="col mb-4">
+                  <label class="form-label" style="font-weight: bolder">Pemilik Kapal</label>
+                  <input type="text" id="shipOwner" class="form-control" v-model="shipOwner" />
+                </div>
+              </div>
+              <div class="row d-none">
+                <div class="col mb-4">
+                  <label class="form-label" style="font-weight: bolder">Penanggung Jawab</label>
+                  <input type="text" class="form-control" v-model="ship.responsible_name" disabled />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col mb-4 d-none">
+                  <label class="form-label" style="font-weight: bolder">Pelabuhan Pangkalan</label>
+                  <input type="text" class="form-control" v-model="shipHarbour" />
+                </div>
+                <div class="col mb-4">
+                  <label class="form-label" style="font-weight: bolder">GT</label>
+                  <input type="text" class="form-control" v-model="shipGT" />
                 </div>
               </div>
               <div class="row">

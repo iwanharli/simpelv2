@@ -245,7 +245,8 @@ export default {
         // Update total count
         this.totalCount = this.inspeksiCount + this.pendingCount
 
-        console.log(`💚 NOTIF UPDATED > ${this.totalCount} at ${new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" })}`)
+        const timestamp = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        console.log(`💚 NOTIF UPDATED > ${this.totalCount} at ${timestamp}`)
       } catch (error) {
         console.error(" 💥 ERROR NOTIF:", error)
       }

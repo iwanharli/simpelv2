@@ -61,7 +61,7 @@ export default {
 
 <style>
 .sidebar-header {
-  background: #2b397e;
+  background: #2366ca;
   /* border-radius: 20px; */
 }
 

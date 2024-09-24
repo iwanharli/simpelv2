@@ -13,7 +13,7 @@
                 <select class="form-select-sm" v-model="itemsPerPage" @change="updatePagination" :style="{ width: '70px' }">
                   <option v-for="option in rowsOptions" :key="option" :value="option">{{ option }}</option>
                 </select>
-                <button type="button" class="btn btn-sm btn-danger" style="display: inline-block; margin-left: 10px; border: 2px solid white"  @click="printPDF()">
+                <button type="button" class="btn btn-sm btn-danger" style="display: inline-block; margin-left: 10px; border: 2px solid white" @click="printPDF()">
                   <i class="ti ti-download me-sm-1"></i>
                   EXPORT CSV
                 </button>
@@ -35,7 +35,7 @@
                   <th style="font-weight: bolder" class="text-center">CHECK OUT</th>
                   <th style="font-weight: bolder">TOTAL BIAYA</th>
                   <th style="width: 5%"></th>
-                  <th style="width: 5%"></th>
+                  <th style="width: 5%" v-if="shipDebt.some(item => !item.paid_at)"></th>
                 </tr>
               </thead>
               <tbody style="background: white">
@@ -58,31 +58,10 @@
                     <b-button size="sm" variant="info" style="border-radius: 20px" data-bs-toggle="modal" data-bs-target="#modalViewPaymentDetail" @click="viewPaymentDetail(item.id)"> <i class="ti ti-search me-xs-1"></i></b-button> &nbsp;
                     <b-button size="sm" variant="primary" style="border-radius: 20px"> <i class="ti ti-printer me-xs-1"></i></b-button>
                   </td>
-                  <td class="text-center bg-soft-primary" style="border-bottom: 1px solid #aebbff">
-                    <b-button size="md" variant="success" v-if="!item.paid_at" @click="payDebt(item.id)"> <i class="ti ti-credit-card-pay me-xs-1"></i> &nbsp; BAYAR </b-button>
+                  <td class="text-center bg-soft-primary" style="border-bottom: 1px solid #aebbff" v-if="!item.paid_at">
+                    <b-button size="md" variant="success" @click="payDebt(item.id, item.ship_name)"> <i class="ti ti-credit-card-pay me-xs-1"></i> &nbsp; BAYAR </b-button>
                   </td>
                 </tr>
-
-                <!-- <tr v-for="(item, index) in this.shipDebt" :key="index++">
-                  <td class="text-center bg-soft-light">
-                    {{ index }}
-                  </td>
-                  <td style="text-transform: uppercase; font-weight: bolder">
-                    {{ item.ship_name }}
-                  </td>
-                  <td>{{ item.check_in_at }}</td>
-                  <td>{{ item.check_out_at || "-" }}</td>
-                  <td style="background: #ff956159">
-                    {{ formatCurrency(item.dock_cost) }}
-                  </td>
-                  <td style="background: #ff7e3f59">
-                    <b-button size="sm" variant="info" style="border-radius: 20px" @click="viewPaymentDetail(debt.id)"> <i class="ti ti-eye me-xs-1"></i></b-button> &nbsp;
-                    <b-button size="sm" variant="primary"> <i class="ti ti-printer me-xs-1"></i></b-button>
-                  </td>
-                  <td class="text-center bg-soft-primary" style="border-bottom: 1px solid #aebbff">
-                    <b-button size="sm" variant="success" v-if="!item.paid_at" @click="payDebt(item.id)"> <i class="ti ti-checks me-xs-1"></i> &nbsp; BAYAR </b-button>
-                  </td>
-                </tr> -->
               </tbody>
             </table>
 
@@ -145,9 +124,9 @@
               <div class="accordion mt-3" id="accordionWithIcon">
                 <div class="accordion-item card">
                   <h2 class="accordion-header d-flex align-items-center">
-                    <button type="button" class="accordion-button collapsed bg-danger text-white" data-bs-toggle="collapse" data-bs-target="#accordionPenalty" aria-expanded="false">
+                    <button type="button" class="accordion-button collapsed bg-secondary text-white" data-bs-toggle="collapse" data-bs-target="#accordionPenalty" aria-expanded="false">
                       <i class="ti ti-history ti-xs me-2"></i>
-                      <span style="font-weight: bolder">PENALTY</span>
+                      <span style="font-weight: bolder">BIAYA KETERLAMBATAN</span>
                     </button>
                   </h2>
                   <div id="accordionPenalty" class="accordion-collapse collapse bg-soft-white">
@@ -251,7 +230,7 @@ export default {
   },
   beforeDestroy() {
     if (this.intervalId) {
-      clearInterval(this.intervalId);
+      clearInterval(this.intervalId)
     }
   },
 
@@ -284,31 +263,45 @@ export default {
         console.log(`💚 Viewing payment details for debt ID: ${id}`)
         console.log(this.shipDetail)
       } else {
-        console.error("Debt not found")
+        console.error("💥Debt not found")
       }
-
-      // const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
-      // axios
-      //   .get(`/api/v1/inspection/`, config)
-      //   .then((res) => {
-      //     // this.shipDetail = res.data.data
-
-      //     console.log(`💚 Viewing payment details for debt ID: ${id}`)
-      //     console.log("💚 SHIP DETAIL PAYMENT FETCHED", this.shipDetail)
-      //   })
-      //   .catch((error) => {
-      //     console.error("💥 SHIP DETAIL PAYMENT ERROR :", error)
-      //     return
-      //   })
     },
 
-    async payDebt(id) {
-      // Logic for handling the payment (e.g., API call or redirection to payment page)
-      console.log(`Paying for debt ID: ${id}`)
-      alert(`Redirecting to payment process for debt ID: ${id}`)
-    },
+    async payDebt(id, ship_name) {
+      Swal.fire({
+        title: "Apakah Anda yakin?",
+        text: `Melanjutkan pembayaran untuk kapal : ${ship_name}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, bayar sekarang!",
+        cancelButtonText: "Batal"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const url = `/api/v1/debt/${id}/pay`
+          const config = {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token")
+            }
+          }
 
-    
+          try {
+            const res = await axios.put(url, {}, config)
+            if (res.status === 200) {
+              console.log(`ID: ${id} berhasil dibayar`)
+              Swal.fire("Berhasil!", `kapal: ${ship_name} telah berhasil dibayar.`, "success")
+            } else {
+              console.error(`Kesalahan saat membayar ID utang: ${id}`)
+              Swal.fire("Gagal!", `Gagal memproses pembayaran untuk kapal: ${ship_name}.`, "error")
+            }
+          } catch (error) {
+            console.error("Terjadi kesalahan saat permintaan pembayaran:", error)
+            Swal.fire("Kesalahan!", `Terjadi kesalahan saat membayar kapal: ${ship_name}.`, "error")
+          }
+        }
+      })
+    },
 
     async printPDF() {
       const element = this.$refs.pdfContent2
