@@ -19,7 +19,7 @@
     </div>
 
     <!-- DETAIL KAPAL  -->
-    <div class="row p-4" style="position: absolute; top: 92%; left: 51%; width: 100%; transform: translate(-50%, -50%); z-index: 1; display: none;">
+    <div class="row p-4" style="position: absolute; top: 92%; left: 51%; width: 100%; transform: translate(-50%, -50%); z-index: 1; display: none">
       <b-col class="col-lg-3 col-md-6">
         <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5); border-radius: 1px solid blue" @click="editShipName(shipName)">
           <div class="d-flex justify-content-between align-items-center">
@@ -125,9 +125,7 @@ export default {
     status: {
       type: String,
       required: true
-    },
-
-    openToastEditShipName: Function
+    }
   },
 
   data() {
@@ -181,26 +179,42 @@ export default {
     },
 
     async mapShipDetail() {
-      if (this.fixGeofence && !this.leaflet_map) {
-        this.leaflet_map = await L.map("mapDetail", { zoomControl: true, zoom: 1, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false }).setView([this.shipCurLat, this.shipCurLong], 18)
+      if (this.fixGeofence && Array.isArray(this.fixGeofence) && this.fixGeofence.length > 0 && !this.leaflet_map) {
+        // Create map
+        this.leaflet_map = await L.map("mapDetail", {
+          zoomControl: true,
+          zoom: 1,
+          zoomAnimation: false,
+          fadeAnimation: false,
+          markerZoomAnimation: false
+        }).setView([this.shipCurLat, this.shipCurLong], 18)
 
+        // Add tile layer
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxNativeZoom: 19,
           maxZoom: 30,
           minZoom: 5
         }).addTo(this.leaflet_map)
 
-        var polygon = L.polygon(this.fixGeofence, {
-          color: "#7367F0",
-          fillColor: "#A1B4FF",
-          fillOpacity: 0.5
-        }).addTo(this.leaflet_map)
+        // Check if geofence coordinates are valid
+        if (this.fixGeofence.every((coords) => Array.isArray(coords) && coords.length === 2)) {
+          var polygon = L.polygon(this.fixGeofence, {
+            color: "#7367F0",
+            fillColor: "#A1B4FF",
+            fillOpacity: 0.5
+          }).addTo(this.leaflet_map)
 
-        this.leaflet_map.fitBounds(polygon.getBounds())
+          this.leaflet_map.fitBounds(polygon.getBounds())
+        } else {
+          console.error("Invalid geofence coordinates:", this.fixGeofence)
+        }
+
+        // Fly to current ship position
         this.leaflet_map.flyTo([this.shipCurLat, this.shipCurLong], 18, {
           duration: 3
         })
 
+        // Set marker icons
         var iconKapal = L.icon({
           iconUrl: markerKapal,
           iconSize: [22, 42],
@@ -214,8 +228,6 @@ export default {
 
         var icon = this.shipOnGround === 1 ? iconNelayan : iconKapal
         this.shipMarker = L.marker([this.shipCurLat, this.shipCurLong], { icon: icon }).addTo(this.leaflet_map)
-
-        // console.log(">", this.shipMarker)
       } else if (this.leaflet_map) {
         this.leaflet_map.flyTo([this.shipCurLat, this.shipCurLong], 18, {
           duration: 3
@@ -343,10 +355,6 @@ export default {
       if (this.polyline) {
         this.leaflet_map.removeLayer(this.polyline)
       }
-    },
-
-    editShipName(shipName){
-      this.openToastEditShipName(shipname)
     }
   }
 }

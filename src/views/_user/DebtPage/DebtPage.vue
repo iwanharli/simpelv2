@@ -35,7 +35,7 @@
                   <th style="font-weight: bolder" class="text-center">CHECK OUT</th>
                   <th style="font-weight: bolder">TOTAL BIAYA</th>
                   <th style="width: 5%"></th>
-                  <th style="width: 5%" v-if="shipDebt.some(item => !item.paid_at)"></th>
+                  <th style="width: 5%" v-if="Array.isArray(shipDebt) && shipDebt.some(item => !item.paid_at)"></th>
                 </tr>
               </thead>
               <tbody style="background: white">
@@ -249,6 +249,8 @@ export default {
         const res = await axios.get("/api/v1/debt/", config)
         this.shipDebt = res.data.data
         this.currentPage = 1
+
+        console.log(res)
 
         console.log("💚 SHIP DEBT FETCHED", this.shipDebt)
       } catch (error) {

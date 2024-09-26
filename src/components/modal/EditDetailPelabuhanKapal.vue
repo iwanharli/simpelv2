@@ -85,9 +85,7 @@ export default {
             ...shipDetail
           }
 
-          // console.log(">", this.shipDetail)
-
-          this.deviceId = res.data.data.device_id
+          // console.log(">", this.shipDetail.device_id)
 
           // If exists
           if (shipDetail.dimension) {
@@ -129,7 +127,9 @@ export default {
         selar_mark: this.shipDetail.selar_mark,
         gt: this.shipDetail.gt,
         owner_name: this.shipDetail.owner_name,
-        iot_phone: this.shipDetail.iot_phone
+        iot_phone: this.shipDetail.iot_phone,
+        device_id: this.shipDetail.device_id,
+        responsible_name: this.shipDetail.responsible_name
       }
 
       // console.log(dataToUpdate)

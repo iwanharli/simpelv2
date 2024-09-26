@@ -1,5 +1,5 @@
 <template>
-  <div id="map" class="simpel-map-container">
+  <div id="map_dashboard" class="simpel-map-container">
     <div id="mapDashboard" style="z-index: 0px !important"></div>
 
     <div id="shipDetailsDiv" class="simpel-ship-detail"></div>
@@ -152,7 +152,7 @@ export default {
         street: "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ufCf3dbMdr7VkfVI6gjQ"
       }
 
-      this.leaflet_map = L.map("map", { zoomControl: false }).setView([this.center.lat, this.center.lng], 15)
+      this.leaflet_map = L.map("map_dashboard", { zoomControl: false }).setView([this.center.lat, this.center.lng], 15)
 
       L.tileLayer(tileUrls.street, {
         maxNativeZoom: 19,

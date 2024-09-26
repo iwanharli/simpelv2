@@ -48,7 +48,7 @@
               <div class="row">
                 <div class="col mb-4">
                   <label class="form-label" style="font-weight: bolder">IMEI</label>
-                  <input type="text" class="form-control" v-model="deviceId" disabled />
+                  <input type="text" class="form-control" v-model="shipDetail.device_id" />
                 </div>
               </div>
               <div class="row">
@@ -81,12 +81,9 @@ export default {
         gt: "",
         width: "",
         length: "",
-        iot_phone: ""
-        // device_id: ""
+        iot_phone: "",
+        device_id: ""
       },
-
-      //sementara
-      deviceId: ""
     }
   },
 
@@ -124,7 +121,7 @@ export default {
 
           // console.log(">", this.shipDetail)
 
-          this.deviceId = res.data.data.device_id
+          // this.deviceId = res.data.data.device_id
 
           // If exists
           if (shipDetail.dimension) {
@@ -165,10 +162,12 @@ export default {
         selar_mark: this.shipDetail.selar_mark,
         gt: this.shipDetail.gt,
         owner_name: this.shipDetail.owner_name,
-        iot_phone: this.shipDetail.iot_phone
+        iot_phone: this.shipDetail.iot_phone,
+        device_id: this.shipDetail.device_id,
+        responsible_name: this.shipDetail.responsible_name
       }
 
-      // console.log(dataToUpdate)
+      console.log(dataToUpdate)
 
       try {
         const res = await axios.put(url, dataToUpdate, {

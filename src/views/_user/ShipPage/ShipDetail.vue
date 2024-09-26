@@ -262,7 +262,7 @@
           <div class="card">
             <div class="card-header d-flex justify-content-between bg-info" style="padding: 20px !important">
               <div class="header-title">
-                <h4 class="card-title" style="font-weight: bold; color: white">HISTORI LABUH KAPAL LAWD ⛵</h4>
+                <h4 class="card-title" style="font-weight: bold; color: white">HISTORI LABUH KAPAL ⛵</h4>
                 <small class="text-light" style="font-weight: normal">Catatan aktivitas labuh kapal di pelabuhan dan status terkait</small>
               </div>
             </div>
@@ -440,9 +440,6 @@ export default {
         input: "text",
         inputLabel: "Masukkan Nama Kapal Baru",
         inputValue: shipName,
-        inputAttributes: {
-          disabled: true
-        },
         showCancelButton: true,
         confirmButtonText: "Simpan",
         cancelButtonText: "Batal",
@@ -456,6 +453,7 @@ export default {
       if (newShipName) {
         const dataToUpdate = {
           ship_id: this.ship.id,
+          ship_name: this.ship.ship_name,
           type: this.ship.detail.type,
           dimension: this.ship.detail.dimension,
           harbour: this.ship.detail.harbour,
@@ -464,7 +462,9 @@ export default {
           selar_mark: this.ship.detail.selar_mark,
           gt: this.ship.detail.gt,
           owner_name: this.ship.detail.owner_name,
-          iot_phone: this.ship.detail.iot_phone
+          iot_phone: this.ship.detail.iot_phone,
+          device_id: this.ship.detail.device_id,
+          responsible_name: this.ship.detail.responsible_name
         }
 
         const url = `/api/v1/ship/update-detail`
