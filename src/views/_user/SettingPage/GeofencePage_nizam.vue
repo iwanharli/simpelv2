@@ -1,20 +1,32 @@
 <template>
-  <div class="card-body p-0">
-    <div class="bg-secondary" style="padding: 20px">
-      <div class="d-flex justify-content-center">
-        <router-link :to="{ name: 'admin.setting-geofence-nizamZachman', params: { id: '919191' } }" class="btn btn-info ml-2">NIZAM ZACHMAN</router-link> &nbsp; &nbsp;
-        <router-link :to="{ name: 'admin.setting-geofence-tegalsari', params: { id: '929292' } }" class="btn btn-info">TEGALSARI</router-link>
-      </div>
-    </div>
+  <div style="padding: 0px !important">
+    <div style="height: 100vh; width: 100%; background: #00000054; position: absolute; left: 0">
 
-    <!-- Map Container -->
-    <div id="map" ref="map" @ready="initializeMap" style="">
-      <div class="map-buttons-container">
-        <button class="btn btn-md btn-map-custom-edit p-3" @click="onSaveButtonClick()">UBAH GEOFENCE</button>
-        <button class="btn btn-md btn-warning btn-map-custom-reset p-3" type="submit" @click="resetSetting()">RESET</button>
+      <!-- BUTTON  -->
+      <div class="map-button-harbour">
+        <div class="d-flex">
+          <router-link :to="{ name: 'admin.setting-geofence-nizamZachman', params: { id: '919191' } }" class="btn btn-info ml-2">NIZAM ZACHMAN</router-link> &nbsp; &nbsp;
+          <router-link :to="{ name: 'admin.setting-geofence-tegalsari', params: { id: '929292' } }" class="btn btn-info">TEGALSARI</router-link>
+        </div>
+      </div>
+      <div class="map-button-submit">
+        <div class="d-flex">
+          <router-link :to="{ name: 'admin.setting-geofence-nizamZachman', params: { id: '919191' } }" class="btn btn-lg btn-primary">Simpan Perubahan</router-link> &nbsp; &nbsp;
+          <router-link :to="{ name: 'admin.setting-geofence-tegalsari', params: { id: '929292' } }" class="btn btn-lg btn-danger">Reset</router-link>
+        </div>
+      </div>
+
+      <!-- Map Container -->
+      <div id="mapGeo" ref="map" @ready="initializeMap">
+        <div class="map-buttons-container">
+          <button class="btn btn-md btn-map-custom-edit p-3" @click="onSaveButtonClick()">UBAH GEOFENCE</button>
+          <button class="btn btn-md btn-warning btn-map-custom-reset p-3" type="submit" @click="resetSetting()">RESET</button>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- <div class="card-body p-0"></div> -->
 </template>
 
 <script>
@@ -77,7 +89,7 @@ export default {
         // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       })
 
-      const map = L.map("map", { preferCanvas: true, zoomControl: false }).setView(latlng, 17).addLayer(tiles)
+      const map = L.map("mapGeo", { preferCanvas: true, zoomControl: false }).setView(latlng, 17).addLayer(tiles)
 
       L.control
         .zoom({
@@ -306,9 +318,41 @@ export default {
   height: 100%; /* Make the card-body stretch to full height */
 }
 
-#map {
-  min-height: 87vh;
+#mapGeo {
+  min-height: 99.9vh;
   position: relative;
+}
+
+.leaflet-top {
+  top: 105px !important;
+}
+
+.leaflet-left .leaflet-control {
+  margin-left: 10px;
+  display: none;
+}
+
+.map-button-harbour {
+  padding: 20px;
+  position: absolute;
+  right: 35%;
+  top: 2%;
+  z-index: 99999;
+  border-radius: 20px;
+  background: black;
+}
+
+.map-button-submit {
+  padding: 20px;
+  position: absolute;
+  bottom: 5%;
+  /* top: 90%; */
+  right: 0;
+  z-index: 99999;
+  border-radius: 20px 0px 0px 20px;
+  background: black;
+  border: 2px solid white;
+  border-right: none;
 }
 
 .map-buttons-container {
@@ -316,7 +360,7 @@ export default {
   display: flex;
   justify-content: flex-end;
   /* justify-content: space-between; */
-  background: #21252994;
+  background-color: rgb(0 0 0 / 5%) !important;
   bottom: 0;
   left: 0;
   right: 0;
@@ -324,6 +368,7 @@ export default {
   padding: 30px;
   border-radius: 20px 20px 0px 0px;
   z-index: 5000;
+  display: none;
 }
 
 .btn-map-custom-edit {

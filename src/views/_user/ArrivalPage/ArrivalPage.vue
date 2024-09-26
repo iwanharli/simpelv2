@@ -1,7 +1,7 @@
 <template>
-  <b-row class="p-4">
+  <b-row style="padding-left: 30px; padding-right: 20px; padding-top: 30px; position: relative; top: 80px">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="110">
         <b-card-header class="bg-secondary pb-3">
           <div class="header-title">
             <b-row>
@@ -24,7 +24,7 @@
           <div class="table-responsive">
             <table id="basic-table" class="table table-border mb-0" role="grid">
               <thead>
-                <tr class="text-white" style="background: #000f25e0; border-top: 1px solid white;">
+                <tr class="text-white" style="background: #000f25e0; border-top: 1px solid white">
                   <th style="font-weight: bolder; width: 5px" class="text-center">ID</th>
                   <th style="font-weight: bolder">NAMA KAPAL</th>
                   <th style="font-weight: bolder">LATITUDE</th>

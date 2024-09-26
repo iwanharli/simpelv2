@@ -1,7 +1,7 @@
 <template>
-  <div :class="`content-inner pb-0 ${pageLayout}`" id="page_layout">
+  <!-- <div :class="`content-inner pb-0 ${pageLayout}`" id="page_layout"> -->
     <slot></slot>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script>

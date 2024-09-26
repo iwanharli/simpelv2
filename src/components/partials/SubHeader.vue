@@ -1,6 +1,6 @@
 <template>
-  <div class="iq-navbar-header" style="height: 165px">
-    <b-container fluid class="iq-container" style="padding: 28px">
+  <div class="iq-navbar-header" style="padding: 60px; padding-top: 0px; padding-bottom: 0px;">
+    <b-container fluid class="iq-container">
       <b-row>
         <b-col md="12">
           <div class="d-flex justify-content-between align-items-center flex-wrap">

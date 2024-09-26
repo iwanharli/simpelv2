@@ -1,9 +1,9 @@
 <template>
-  <div style="position: relative; height: 800px">
-    <div id="map" style="height: 100%; width: 100%; border-radius: 20px; z-index: 0"></div>
+  <div style="position: relative; height: 900px">
+    <div id="mapDetail" style="height: 100%; width: 100%; z-index: 0; border-bottom: 4px solid white"></div>
 
     <div class="col-xl-6 col-md-6 cols-sm-12 mx-auto" style="position: absolute; top: 92%; left: 50%; transform: translate(-50%, -50%); z-index: 1">
-      <div class="row" style="background-color: #83838357; padding: 10px; border-radius: 10px; border: 1px solid white;">
+      <div class="row" style="background-color: #83838357; padding: 10px; border-radius: 10px; border: 1px solid white">
         <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12">
           <div class="input-group input-daterange" id="bs-datepicker-daterange">
             <input type="date" placeholder="MM/DD/YYYY" class="form-control" v-model="dateStart" />
@@ -93,13 +93,7 @@ export default {
 
     async mapShipDetail() {
       if (this.fixGeofence && !this.leaflet_map) {
-        const mapElement = document.getElementById("map")
-        if (!mapElement) {
-          console.error("Map element not found in the document.")
-          return
-        }
-
-        this.leaflet_map = await L.map("map", { zoomControl: true, zoom: 1, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false }).setView([this.shipCurLat, this.shipCurLong], 18)
+        this.leaflet_map = await L.map("mapDetail", { zoomControl: false, zoom: 1, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false }).setView([this.shipCurLat, this.shipCurLong], 18)
 
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxNativeZoom: 19,

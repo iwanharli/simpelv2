@@ -21,8 +21,16 @@
       </div>
     </main-content-component>
 
+    <div class="navbarBottom p-3">
+      <div class="button-group">
+        <button class="btn btn-lg btn-primary rounded-5 me-2">Button 1</button>
+        <button class="btn btn-lg btn-warning rounded-5">Button 2</button>
+      </div>
+    </div>
+
     <!-- <footer-component></footer-component> -->
   </main>
+
   <setting-offcanvas></setting-offcanvas>
 </template>
 
@@ -54,3 +62,23 @@ const isLoader = ref(true)
 //   }, 300)
 // })
 </script>
+
+<style scoped>
+.navbarBottom {
+  position: absolute;
+  right: 0;
+  bottom: 30px;
+  width: 20%;
+  height: 100px;
+  border-radius: 50px 0px 0px 50px;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+}
+
+.button-group {
+  display: flex;
+  justify-content: left;
+  height: 100%;
+}
+</style>

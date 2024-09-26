@@ -1,8 +1,7 @@
 <template>
-  <b-row class="p-4">
-    <!-- ARRIVAL  -->
+  <b-row style="padding-left: 30px; padding-right: 20px; position: absolute; top:150px; right:0; width: 86%;">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="110">
         <b-card-header class="bg-warning pb-3">
           <div class="header-title">
             <b-row>

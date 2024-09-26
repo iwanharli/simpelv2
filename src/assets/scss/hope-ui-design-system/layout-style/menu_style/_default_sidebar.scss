@@ -152,7 +152,8 @@
                 .icon{
                     display: flex;
                 }
-                color: $gray-600;
+                color: $black;
+                // sidebar text color
                 &.active,&[aria-expanded=true]{
                     .right-icon {
                         transition: var(--sidebar-transition);

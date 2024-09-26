@@ -21,7 +21,7 @@
             transition: all 400ms;
             transform-origin: center left;
             overflow: hidden;
-            border-radius: $border-radius-lg;
+            border-radius: 0px 0px 0px 20px;
             img {
                 object-fit: cover;
             }

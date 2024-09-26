@@ -1,5 +1,5 @@
 <template>
-  <b-row class="p-4" style="min-height: 91vh">
+  <b-row style="padding-left: 30px; padding-right: 20px; padding-top: 30px; position: relative; top: 80px">
     <!-- SETTING APLIKASI  -->
     <b-col xl="9" class="bg-transparent" data-aos="fade-right" data-aos-delay="100">
       <div class="card bg-light" style="border-radius: 0px 0px 20px 20px">

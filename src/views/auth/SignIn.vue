@@ -1,5 +1,5 @@
 <template>
-  <section class="login-content">
+  <section class="login-content" style="height: 100vh">
     <b-row class="m-0 align-items-center bg-white h-100 gradient-bg">
       <b-col md="6">
         <b-row class="justify-content-center">

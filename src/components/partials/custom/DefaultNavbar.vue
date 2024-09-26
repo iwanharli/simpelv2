@@ -1,6 +1,6 @@
 <template>
   <!-- <nav :class="`nav navbar navbar-expand-xl navbar-light iq-navbar ${headerNavbar} ${navbarHide.join('')}`"> -->
-  <nav :class="`nav navbar navbar-expand-md navbar-light iq-navbar ${headerNavbar}`">
+  <nav :class="`nav navbar navbar-expand-md navbar-light iq-navbar ${headerNavbar}`" :style="{ left: NavbarLeft, background: NavbarBackground }">
     <div class="container-fluid navbar-inner">
       <slot></slot>
       <div></div>
@@ -228,6 +228,26 @@ export default {
     }, 10 * 60 * 1000)
   },
 
+  computed: {
+    NavbarLeft() {
+      if (this.$route.name === "admin.dashboard") {
+        return "7%"
+      } else if (this.$route.name === "admin.setting-geofence-nizamZachman") {
+        return "7%"
+      }
+      return "78%" // Default value
+    },
+
+    NavbarBackground() {
+      if (this.$route.name === "admin.dashboard") {
+        return "rgba(255, 255, 255, 0.3)"
+      } else if (this.$route.name === "admin.setting-geofence-nizamZachman") {
+        return "rgba(255, 255, 255, 0.3)"
+      }
+      return "white" // Default value
+    }
+  },
+
   methods: {
     async fetchNotif() {
       const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
@@ -269,12 +289,12 @@ export default {
 
 <style>
 nav.navbar {
+  transition: left 1s ease, background 1s ease;
   position: absolute !important;
   top: 20px;
   right: 20px;
   border-radius: 50px 20px 20px 50px;
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); /* Adjust shadow values as needed */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 .nav .navbar-inner {

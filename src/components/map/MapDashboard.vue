@@ -406,7 +406,7 @@ export default {
   z-index: 0px;
 }
 
-.leaflet-bottom.leaflet-right {
+.leaflet-control-container {
   display: none;
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <aside id="first-tour" :class="`sidebar sidebar-base ${sidebarColor} ${sidebarMenuStyle} ${sidebarType.join(' ')}`" data-toggle="main-sidebar" data-sidebar="responsive" style="z-index: 2000 !important">
+  <aside id="first-tour" :class="`sidebar sidebar-base ${sidebarColor} ${sidebarMenuStyle} ${sidebarType.join(' ')}`" data-toggle="main-sidebar" data-sidebar="responsive" style="z-index: 2000 !important" :style="{ top: sidebarTop, background: sidebarBackground }">
     <div class="sidebar-header d-flex align-items-center justify-content-start">
       <router-link :to="{ name: 'admin.dashboard' }" class="navbar-brand" style="margin-left: 3px">
         <img class="logo" src="@/assets/app/s-logo.svg" />
@@ -19,6 +19,7 @@
         </i>
       </div>
     </div>
+    
     <div class="sidebar-body pt-0 data-scrollbar">
       <slot name="profile-card"></slot>
       <div class="sidebar-list">
@@ -40,6 +41,7 @@ export default {
     const sidebarColor = computed(() => store.getters["setting/sidebar_color"])
     const sidebarType = computed(() => store.getters["setting/sidebar_type"])
     const sidebarMenuStyle = computed(() => store.getters["setting/sidebar_menu_style"])
+
     const toggleSidebar = () => {
       // Code Here
       if (sidebarType.value.includes("sidebar-mini")) {
@@ -55,18 +57,37 @@ export default {
       Scrollbar.init(document.querySelector(".data-scrollbar"), { continuousScrolling: false })
     })
     return { sidebarColor, sidebarType, sidebarMenuStyle, toggleSidebar }
+  },
+
+  computed: {
+    sidebarTop() {
+      if (this.$route.name === "admin.dashboard") {
+        return "12%"
+      } else if (this.$route.name === "admin.setting-geofence-nizamZachman") {
+        return "12%"
+      }
+      return "2%" // Default value
+    },
+
+    sidebarBackground() {
+      if (this.$route.name === "admin.dashboard") {
+        return "rgba(255, 255, 255, 0.56)"
+      } else if (this.$route.name === "admin.setting-geofence-nizamZachman") {
+        return "rgba(255, 255, 255, 0.56)"
+      }
+      return "white"
+    }
   }
 }
 </script>
 
 <style>
 .sidebar {
-  position: absolute;
-  top: 12%;
+  position: fixed;
   left: 10px;
   bottom: auto;
   border-radius: 20px 20px 30px 20px;
-  background: rgba(255, 255, 255, 0.56);
+  transition: top 1s ease, background 1s ease;
 }
 
 .sidebar-header {
@@ -95,6 +116,10 @@ export default {
 .sidebar-header .logo-title {
   display: flex;
   align-items: center;
+}
+
+.sidebar-base .nav-item .nav-link {
+  /* color: black !important; */
 }
 
 .logo {
