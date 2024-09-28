@@ -1,7 +1,7 @@
 <template>
   <b-row class="p-4">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="100">
         <b-card-header class="bg-secondary text-light pb-4">
           <div class="header-title">
             <b-row>
@@ -43,7 +43,7 @@
                   <td colspan="7" class="bg-soft-white">Data kosong</td>
                 </tr>
 
-                <tr v-for="(item, index) in paginatedDockingReports" :key="index" v-else>
+                <tr v-for="(item, index) in paginatedDockingReports" :key="index" data-aos="fade-left" :data-aos-delay="100 * (index + 2)" v-else>
                   <td class="text-center bg-soft-light">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
@@ -72,7 +72,7 @@
                   </td>
                   <td class="text-center bg-soft-primary">
                     <RouterLink :to="{ name: 'admin.shipDetail', params: { shipId: item.ship_id } }">
-                      <button class="btn btn-sm btn-info" type="button" id="kapal_detail"><i class="ti ti-search me-sm-1"></i> DETAIL</button>
+                      <button class="btn btn-sm btn-primary" type="button" id="kapal_detail"><i class="ti ti-search me-sm-1"></i> DETAIL</button>
                     </RouterLink>
                   </td>
                 </tr>

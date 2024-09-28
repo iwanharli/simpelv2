@@ -1,7 +1,7 @@
 <template>
   <b-row class="p-4">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="110">
         <b-card-header class="bg-primary text-light pb-4">
           <div class="header-title">
             <b-row>
@@ -29,7 +29,7 @@
                 </tr>
               </thead>
               <tbody style="background: white;">
-                <tr v-for="(item, index) in paginatedUserData" :key="index">
+                <tr v-for="(item, index) in paginatedUserData" :key="index" data-aos="fade-left" :data-aos-delay="50 * (index + 2)">
                   <td class="text-center bg-soft-light">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
@@ -44,7 +44,7 @@
                   </td>
                   <td class="text-center">{{ item.updated_at }}</td>
                   <td class="text-center">{{ item.created_at }}</td>
-                  <td class="text-center bg-soft-primary">
+                  <td class="text-center bg-soft-primary p-2">
                     <div class="flex align-items-center list-user-action">
                       <a class="btn btn-md btn-icon btn-info" data-bs-toggle="modal" data-bs-target="#modalEditUserMobile" @click="editUserMobile(item)">
                         <i class="ti ti-edit"></i>
@@ -105,7 +105,7 @@
         </div>
         <div class="modal-footer mt-2">
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="submitEdit()">EDIT</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">CANCEL</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">BATAL</button>
         </div>
       </div>
     </div>

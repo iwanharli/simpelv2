@@ -1,7 +1,7 @@
 <template>
   <b-row class="p-4">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="110">
         <b-card-header class="bg-primary text-light pb-4">
           <div class="header-title">
             <b-row>
@@ -24,7 +24,7 @@
           <div class="table-responsive">
             <table id="basic-table table-border" class="table table-md mb-0" role="grid">
               <thead>
-                <tr class="text-white" style="background: #758cff;">
+                <tr class="text-white" style="background: #758cff">
                   <th class="text-center" style="font-weight: bolder; width: 5px">ID</th>
                   <th class="text-center" style="width: 3%; font-weight: bolder">NAMA</th>
                   <th style="font-weight: bolder; padding: 5px 5px 16px 0px">PENGGUNA</th>
@@ -34,7 +34,7 @@
                 </tr>
               </thead>
               <tbody style="background: white">
-                <tr v-for="(item, index) in paginatedUserData" :key="index">
+                <tr v-for="(item, index) in paginatedUserData" :key="index" data-aos="fade-left" :data-aos-delay="50 * (index + 2)">
                   <td class="text-center bg-soft-light">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
@@ -127,7 +127,7 @@
         </div>
         <div class="modal-footer mt-4">
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="validationAddUser()">Tambah</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">BATAL</button>
         </div>
       </div>
     </div>
@@ -174,7 +174,7 @@
         </div>
         <div class="modal-footer mt-2">
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="submitEdit()">EDIT</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">CANCEL</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">BATAL</button>
         </div>
       </div>
     </div>
@@ -487,20 +487,17 @@ export default {
     },
 
     formatDate(dateString) {
-      const date = new Date(dateString);
-      const months = [
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-      ];
+      const date = new Date(dateString)
+      const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 
-      const day = date.getDate();
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
+      const day = date.getDate()
+      const month = months[date.getMonth()]
+      const year = date.getFullYear()
+      const hours = String(date.getHours()).padStart(2, "0")
+      const minutes = String(date.getMinutes()).padStart(2, "0")
+      const seconds = String(date.getSeconds()).padStart(2, "0")
 
-      return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
+      return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`
     },
 
     togglePasswordVisibility() {

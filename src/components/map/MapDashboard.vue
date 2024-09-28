@@ -1,5 +1,9 @@
 <template>
   <div id="map_dashboard" class="simpel-map-container">
+    <!-- <div id="loading" style="display: none">
+      <div class="spinner"></div>
+    </div> -->
+
     <div id="mapDashboard" style="z-index: 0px !important"></div>
 
     <div id="shipDetailsDiv" class="simpel-ship-detail"></div>
@@ -77,7 +81,6 @@
 import L from "leaflet"
 import axios from "axios"
 import AOS from "aos"
-import Swal from "sweetalert2"
 import "leaflet.markercluster"
 import "leaflet/dist/leaflet.css"
 
@@ -121,20 +124,25 @@ export default {
   },
 
   mounted() {
-    this.initializeMap()
-    this.initializeWebSocket()
-    this.fetchShipDocking()
+    // this.showLoading() // Show the loading spinner
+    Promise.all([this.initializeMap(), this.initializeWebSocket(), this.fetchShipDocking()]).finally(() => {
+      // setTimeout(() => {
+      //   this.hideLoading() // Hide the loading spinner after 1 second
+      // }, 1000) // Delay of 1 second (1000 milliseconds)
+    })
+  },
+
+  beforeRouteLeave(to, from, next) {
+    console.log(`Navigating to: ${to.name}`);
+    this.closeWebSocket(); // Close WebSocket when leaving the route
+    next(); // Continue navigation
   },
 
   unmounted() {
-    if (this.socket) this.socket.close()
+    this.closeWebSocket(); // Ensure WebSocket is closed when the component is unmounted
   },
 
   methods: {
-    toggleArrival() {
-      this.muncul = !this.muncul
-    },
-
     /*****************/
     async fetchShipDocking() {
       try {
@@ -147,7 +155,6 @@ export default {
     },
 
     async initializeMap() {
-      await this.fixMapZoomAnimation()
       const tileUrls = {
         street: "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ufCf3dbMdr7VkfVI6gjQ"
       }
@@ -196,20 +203,19 @@ export default {
     async updateMarker(ship) {
       try {
         const { ship_id, geo, on_ground, ship_name, device_id } = ship
-        const timestamp = new Date().toLocaleString()
+        const timestamp = new Date().toLocaleTimeString()
 
         if (this.leaflet_markers[ship_id]) {
           this.leaflet_markers[ship_id].setLatLng([geo[1], geo[0]])
 
           // SHIP WS INFO -------------------------------------------------------
-          console.log(`> UPDATE MARKER 🚥🚥🚥
-          Time: ${timestamp}
-          Ship ID: ${ship.ship_id}
-          Ship Name: ${ship.ship_name}
-          Device ID: ${ship.device_id}
-          Coordinates: [Lat: ${ship.geo[1]}, Lng: ${ship.geo[0]}]
-          On Ground: ${ship.on_ground ? "Yes" : "No"}
-          Is Update: ${ship.is_update ? "Yes" : "No"}
+          console.log(`> SHIP ${ship.ship_id} 🚥🚥🚥
+        Time: ${timestamp}
+        Ship Name: ${ship.ship_name}
+        Device ID: ${ship.device_id}
+        Coordinates: [Lat: ${ship.geo[1]}, Lng: ${ship.geo[0]}]
+        On Ground: ${ship.on_ground ? "Yes" : "No"}
+        Is Update: ${ship.is_update ? "Yes" : "No"}
           `)
           // SHIP WS INFO --------------------------------------------------------
         } else {
@@ -226,7 +232,7 @@ export default {
       }
     },
 
-    showShipDetails(ship) {
+    async showShipDetails(ship) {
       const currentUrl = window.location.href.replace("dashboard", "ship")
       const shipDetailHtml = `
         <div class='table-responsive p-3'>
@@ -257,19 +263,24 @@ export default {
     },
 
     async initializeWebSocket() {
+      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        console.log("WebSocket is already connected.");
+        return; // Skip initialization if already connected
+      }
+
       try {
-        this.socket = new WebSocket(this.ws_url)
-        this.socket.onopen = () => console.log("📶 WEBSOCKET CONNECTED to", this.ws_url)
-        this.socket.onmessage = (message) => this.processSocketData(message)
-        this.socket.onerror = (error) => console.error("WebSocket error:", error)
+        this.socket = new WebSocket(this.ws_url);
+        this.socket.onopen = () => console.log("📶 WEBSOCKET CONNECTED");
+        this.socket.onmessage = (message) => this.processSocketData(message);
+        this.socket.onerror = (error) => console.error("WebSocket error:", error);
         this.socket.onclose = (event) => {
-          console.log(event.code === 1000 ? "WebSocket disconnected" : `WebSocket disconnected with code ${event.code}`)
-          if (event.code !== 1000) setTimeout(() => this.initializeWebSocket(), 5000)
-        }
+          console.log(event.code === 1000 ? "WebSocket disconnected" : `WebSocket disconnected with code ${event.code}`);
+          if (event.code !== 1000) setTimeout(() => this.initializeWebSocket(), 5000);
+        };
       } catch (error) {
-        console.error("💥 WebSocket connection error:", error)
-        if (this.socket && this.socket.readyState === WebSocket.OPEN) this.socket.close()
-        setTimeout(() => this.initializeWebSocket(), 5000)
+        console.error("💥 WebSocket connection error:", error);
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) this.socket.close();
+        setTimeout(() => this.initializeWebSocket(), 5000);
       }
     },
 
@@ -280,18 +291,31 @@ export default {
       }
     },
 
-    async fixMapZoomAnimation() {
-      L.Popup.prototype._animateZoom = L.Tooltip.prototype._animateZoom = function (e) {
-        if (!this._map) return
-        const pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center)
-        this._setPosition(pos)
+    closeWebSocket() {
+      if (this.socket) {
+        console.log("Closing WebSocket...");
+        this.socket.close(); // Close the WebSocket connection
+        this.socket = null; // Clean up the socket reference
+        console.log("📶 WEBSOCKET DISCONNECTED____");
+      } else {
+        console.log("No WebSocket connection to close.");
       }
+    },
 
-      L.Marker.prototype._animateZoom = function (e) {
-        if (!this._map) return
-        const pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center).round()
-        this._setPos(pos)
-      }
+    /*****************/
+
+    // showLoading() {
+    //   const loadingDiv = document.getElementById("loading")
+    //   loadingDiv.style.display = "flex" // Show the loading spinner
+    // },
+
+    // hideLoading() {
+    //   const loadingDiv = document.getElementById("loading")
+    //   loadingDiv.style.display = "none" // Hide the loading spinner
+    // },
+
+    toggleArrival() {
+      this.muncul = !this.muncul
     }
   }
 }
@@ -392,11 +416,6 @@ export default {
   width: 200px;
 }
 
-/* Optional: Style for the button */
-.btn-primary {
-  /* margin-top: 10px; */
-}
-
 .leaflet-top,
 .leaflet-bottom {
   z-index: 0px;
@@ -427,6 +446,57 @@ export default {
 @media only screen and (max-width: 400px) {
   .inspeksi-mobile {
     max-width: 200px;
+  }
+}
+
+/* ANIMATION  */
+.blinking-marker {
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.5), rgba(255, 255, 0, 0.5));
+  border-radius: 50%;
+  width: 35px; /* Set width to match iconSize */
+  height: 50px; /* Set height to match iconSize */
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* LOADING  */
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000ba;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>

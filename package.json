@@ -28,6 +28,7 @@
     "aos": "^2.3.4",
     "apexcharts": "^3.35.2",
     "axios": "^1.6.2",
+    "axios-retry": "^4.5.0",
     "bootstrap-vue-3": "^0.2.8",
     "core-js": "^3.6.5",
     "datatables.net-bs5": "^1.11.2",

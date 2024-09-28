@@ -40,7 +40,7 @@
               </thead>
               <tbody style="background: white">
                 <tr v-for="(item, index) in this.shipDebt" :key="index++">
-                  <td class="text-center bg-soft-light">
+                  <td class="text-center bg-soft-light p-2">
                     {{ index }}
                   </td>
                   <td style="text-transform: uppercase; font-weight: bolder">
@@ -250,7 +250,7 @@ export default {
         this.shipDebt = res.data.data
         this.currentPage = 1
 
-        console.log(res)
+        // console.log(this.shipDebt)
 
         console.log("💚 SHIP DEBT FETCHED", this.shipDebt)
       } catch (error) {

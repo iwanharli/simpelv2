@@ -179,6 +179,11 @@ export default {
     },
 
     async mapShipDetail() {
+      // Check if the map already exists
+      if (this.leaflet_map) {
+        this.leaflet_map.remove() // Remove the existing map
+      }
+
       if (this.fixGeofence && Array.isArray(this.fixGeofence) && this.fixGeofence.length > 0 && !this.leaflet_map) {
         // Create map
         this.leaflet_map = await L.map("mapDetail", {

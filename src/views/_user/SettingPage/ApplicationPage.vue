@@ -173,8 +173,17 @@ export default {
     },
 
     async updateMobileSetting() {
-      const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
+      if (parseInt(this.dockingCost) === 0) {
+        Swal.fire({
+          title: "Invalid Input",
+          text: "BIAYA LABUH tidak boleh 0",
+          icon: "error",
+          confirmButtonText: "OK"
+        })
+        return
+      }
 
+      const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
       const updatedData = {
         harbour_code: parseInt(this.harbourCode),
         harbour_name: this.harbourName,
@@ -186,7 +195,7 @@ export default {
         docking_cost: parseInt(this.dockingCost),
         cost_multiplier: parseInt(this.costMultiplier),
         apk_download_link: this.appUrl,
-        geofence: []
+        geofence: this.appGeofence
       }
 
       await axios
@@ -201,7 +210,7 @@ export default {
           })
 
           this.getSettingApp()
-          console.log("🚀 UPDATE SUCCESS", response)
+          console.log("🚀 UPDATE SUCCESS")
         })
         .catch((error) => {
           console.error("💥 UPDATE FAILED:", error)
@@ -209,59 +218,69 @@ export default {
     },
 
     async resetSetting() {
-      // Preserve the current values of formattedDockingCost and costMultiplier
-      const currentFormattedDockingCost = parseInt(this.formattedDockingCost.replace(/\./g, ""), 10)
-      const currentCostMultiplier = this.costMultiplier
+      // Show SweetAlert confirmation before resetting
+      const result = await Swal.fire({
+        title: "Apakah Anda yakin?",
+        text: "Anda akan mengatur ulang semua pengaturan ke default!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Ya, Reset",
+        cancelButtonText: "Batal",
+        reverseButtons: true
+      })
 
-      // INITIAL
-      this.harbourCode = 919191
-      this.harbourName = "PELABUHAN NIZAM ZACHMAN"
-      this.adminContact = "081802796414"
-      this.appMode = "interval"
-      this.appInterval = 30
-      this.appRange = 2
-      this.appVersion = "2.5.0"
-      this.appUrl = "https://demo.t-hisyam.net/apk/simpel/app-release.apk"
-      const coordinate = []
+      if (result.isConfirmed) {
+        // INITIAL
+        this.harbourCode = 919191
+        this.harbourName = "PELABUHAN NIZAM ZACHMAN"
+        this.adminContact = "081802796414"
+        this.appMode = "interval"
+        this.appInterval = 30
+        this.appRange = 2
+        this.appVersion = "2.5.0"
+        this.appUrl = "https://demo.t-hisyam.net/apk/simpel/app-release.apk"
+        this.dockingCost = 20000
+        this.costMultiplier = 1
+        const coordinate = this.appGeofence
 
-      // UPDATING
-      const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
+        // RESETING
+        const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
+        const updatedData = {
+          harbour_code: parseInt(this.harbourCode),
+          harbour_name: this.harbourName,
+          admin_contact: this.adminContact,
+          mode: this.appMode,
+          apk_min_version: this.appVersion,
+          interval: parseInt(this.appInterval),
+          range: parseInt(this.appRange),
+          docking_cost: parseInt(this.dockingCost),
+          cost_multiplier: this.costMultiplier,
+          apk_download_link: this.appUrl,
+          geofence: coordinate
+        }
 
-      const updatedData = {
-        harbour_code: parseInt(this.harbourCode),
-        harbour_name: this.harbourName,
-        admin_contact: this.adminContact,
-        mode: this.appMode,
-        apk_min_version: this.appVersion,
-        interval: parseInt(this.appInterval),
-        range: parseInt(this.appRange),
-        docking_cost: currentFormattedDockingCost,
-        cost_multiplier: currentCostMultiplier,
-        apk_download_link: this.appUrl,
-        geofence: coordinate
-      }
+        // console.log(updatedData)
 
-      console.log(updatedData)
+        await axios
+          .post("api/v1/setting/create-or-update", updatedData, config)
+          .then((response) => {
+            Swal.fire({
+              title: "Terimakasih!",
+              text: "Setting telah berhasil direset 😊",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 2000
+            })
 
-      await axios
-        .post("api/v1/setting/create-or-update", updatedData, config)
-        .then((response) => {
-          Swal.fire({
-            title: "Terimakasih!",
-            text: "Setting telah berhasil direset 😊",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 2000
+            this.getSettingApp()
+            console.log("🚀 RESET SUCCESS")
           })
-
-          this.getSettingApp()
-          console.log("🚀 RESET SUCCESS", response)
-        })
-        .catch((error) => {
-          console.error("💥 RESET FAILED:", error)
-        })
-
-      console.log("FORM HAS BEEN RESET")
+          .catch((error) => {
+            console.error("💥 RESET FAILED:", error)
+          })
+      } else {
+        console.log("Reset canceled by user")
+      }
     },
 
     formatDockingCost(event) {

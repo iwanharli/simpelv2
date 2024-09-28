@@ -1,53 +1,58 @@
 <template>
   <router-view />
+
+  <!-- Loading Spinner -->
+  <!-- <div id="loading" style="display: none">
+    <div class="spinner"></div>
+  </div> -->
 </template>
 
 <script>
-import { onMounted, onUnmounted, computed } from 'vue'
-import { useStore } from 'vuex'
+import { onMounted, onUnmounted, computed } from "vue"
+import { useStore } from "vuex"
 // import '@/assets/themify/themify-icons.css';
-import '@/plugins/styles'
+import "@/plugins/styles"
 
 export default {
-  name: 'App',
+  name: "App",
   setup() {
     const store = useStore()
-    store.dispatch('setting/setSetting')
-    const sidebarType = computed(() => store.getters['setting/sidebar_type'])
+    store.dispatch("setting/setSetting")
+    const sidebarType = computed(() => store.getters["setting/sidebar_type"])
     const resizePlugin = () => {
       const sidebarResponsive = document.querySelector('[data-sidebar="responsive"]')
       if (window.innerWidth < 1025) {
         if (sidebarResponsive !== null) {
-          if (!sidebarResponsive.classList.contains('sidebar-mini')) {
-            sidebarResponsive.classList.add('on-resize')
-            store.dispatch('setting/sidebar_type', [...sidebarType.value, 'sidebar-mini'])
+          if (!sidebarResponsive.classList.contains("sidebar-mini")) {
+            sidebarResponsive.classList.add("on-resize")
+            store.dispatch("setting/sidebar_type", [...sidebarType.value, "sidebar-mini"])
           }
         }
       } else {
         if (sidebarResponsive !== null) {
-          if (sidebarResponsive.classList.contains('sidebar-mini') && sidebarResponsive.classList.contains('on-resize')) {
-            sidebarResponsive.classList.remove('on-resize')
+          if (sidebarResponsive.classList.contains("sidebar-mini") && sidebarResponsive.classList.contains("on-resize")) {
+            sidebarResponsive.classList.remove("on-resize")
             store.dispatch(
-              'setting/sidebar_type',
-              sidebarType.value.filter((item) => item !== 'sidebar-mini')
+              "setting/sidebar_type",
+              sidebarType.value.filter((item) => item !== "sidebar-mini")
             )
           }
         }
       }
     }
     onMounted(() => {
-      window.addEventListener('resize', resizePlugin)
+      window.addEventListener("resize", resizePlugin)
       setTimeout(() => {
         resizePlugin()
       }, 200)
     })
     onUnmounted(() => {
-      window.removeEventListener('resize', resizePlugin)
+      window.removeEventListener("resize", resizePlugin)
     })
   }
 }
 </script>
 
 <style lang="scss">
-@import '@/assets/custom-vue/scss/styles.scss';
+@import "@/assets/custom-vue/scss/styles.scss";
 </style>

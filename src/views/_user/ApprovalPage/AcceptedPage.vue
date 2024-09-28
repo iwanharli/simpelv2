@@ -1,7 +1,7 @@
 <template>
   <b-row class="p-4">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="100">
         <b-card-header class="bg-secondary pb-3">
           <div class="header-title">
             <b-row>
@@ -39,19 +39,19 @@
                   <td colspan="6" class="bg-soft-white">Data kosong</td>
                 </tr>
 
-                <tr v-for="(item, index) in paginatedApprovedData" :key="index" v-else>
+                <tr v-for="(item, index) in paginatedApprovedData" :key="index" data-aos="fade-left" :data-aos-delay="100 * (index + 2)" v-else>
                   <td class="text-center bg-soft-light" style="font-weight: bolder">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
-                  <td style="text-transform: uppercase; font-weight: bolder" data-label="🚢">
+                  <td class="p-2" style="text-transform: uppercase; font-weight: bolder" data-label="🚢">
                     {{ item.ship_name }}
                   </td>
-                  <td data-label="👲">
+                  <td class="p-2" data-label="👲">
                     <span style="font-weight: bold; text-transform: uppercase">{{ item.responsible_name }}</span> <br />
                     <small>📱{{ item.device_id }}</small>
                   </td>
-                  <td data-label="📱">
-                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm btn-info p-2" target="_blank" style="display: flex; gap: 10px; align-items: center">
+                  <td class="p-2" data-label="📱">
+                    <a :href="getWhatsAppLink(item.phone)" type="button" class="btn btn-sm btn-info p-1" target="_blank" style="display: flex; gap: 10px; align-items: center">
                       <img src="@/assets/images/icon/whatsapp.png" width="20" height="20" style="display: inline-block; box-shadow: 0 0 5px white; border-radius: 5px" />
                       <span style="display: inline-block; color: white !important">{{ item.phone }}</span>
                     </a>
@@ -59,8 +59,8 @@
                   <!-- <td class="text-center">
                     {{ item.created_at }}
                   </td> -->
-                  <td class="text-center bg-soft-primary">
-                    <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalViewDetailApproved" @click="fetchShipAcceptedDetail(item.username)"><i class="ti ti-search me-sm-1"></i> DETAIL</button>
+                  <td class="text-center bg-soft-primary p-2">
+                    <button class="btn btn-md btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalViewDetailApproved" @click="fetchShipAcceptedDetail(item.username)"><i class="ti ti-search me-sm-1"></i> DETAIL</button>
                   </td>
                 </tr>
               </tbody>

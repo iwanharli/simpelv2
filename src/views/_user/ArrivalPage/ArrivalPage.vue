@@ -1,7 +1,7 @@
 <template>
   <b-row class="p-4">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="100">
         <b-card-header class="bg-secondary pb-3">
           <div class="header-title">
             <b-row>
@@ -24,7 +24,7 @@
           <div class="table-responsive">
             <table id="basic-table" class="table table-border mb-0" role="grid">
               <thead>
-                <tr class="text-white" style="background: #000f25e0; border-top: 1px solid white;">
+                <tr class="text-white" style="background: #000f25e0; border-top: 1px solid white">
                   <th style="font-weight: bolder; width: 5px" class="text-center">ID</th>
                   <th style="font-weight: bolder">NAMA KAPAL</th>
                   <th style="font-weight: bolder">LATITUDE</th>
@@ -39,8 +39,8 @@
                   <td colspan="6" class="bg-soft-white">Data kosong</td>
                 </tr>
 
-                <tr v-for="(item, index) in paginatedShips" :key="index++" v-else>
-                  <td class="text-center bg-soft-light">
+                <tr v-for="(item, index) in paginatedShips" :key="index" data-aos="fade-left" :data-aos-delay="100 * (index + 2)" v-else>
+                  <td class="text-center bg-soft-light p-2">
                     {{ index }}
                   </td>
                   <td style="text-transform: uppercase; font-weight: bolder">
@@ -56,9 +56,9 @@
                     {{ item.checkin_date }}
                   </td>
                   <td class="text-center bg-soft-primary">
-                    <b-button size="md" variant="success" @click="inspectedSubmit(item.log_id)" :disabled="item.is_inspected === 1"> <i class="ti ti-checks me-xs-1"></i> &nbsp; INSPEKSI </b-button>
+                    <b-button size="sm" variant="success" @click="inspectedSubmit(item.log_id)" :disabled="item.is_inspected === 1"> <i class="ti ti-checks me-xs-1"></i> &nbsp; INSPEKSI </b-button>
                     &nbsp;
-                    <b-button size="md" variant="warning" @click="reportedSubmit(item.log_id)" :disabled="item.is_reported === 1"> <i class="ti ti-ban me-xs-1"></i> &nbsp; REPORT </b-button>
+                    <b-button size="sm" variant="warning" @click="reportedSubmit(item.log_id)" :disabled="item.is_reported === 1"> <i class="ti ti-ban me-xs-1"></i> &nbsp; REPORT </b-button>
                   </td>
                 </tr>
               </tbody>
@@ -122,7 +122,7 @@ export default {
 
   computed: {
     paginatedShips() {
-      // jika null
+      // Return an empty array if shipArrival is not available
       if (!this.shipArrival) {
         return []
       }
@@ -130,6 +130,7 @@ export default {
       if (this.rowsPerPage === "ALL") {
         return this.shipArrival
       }
+
       const start = (this.currentPage - 1) * this.rowsPerPage
       const end = start + this.rowsPerPage
 
@@ -140,21 +141,21 @@ export default {
       if (!this.shipArrival) {
         return 1
       }
-
       if (this.rowsPerPage === "ALL") {
         return 1
       }
-
       return Math.ceil(this.shipArrival.length / this.rowsPerPage)
     }
   },
 
-  mounted() {
+  created() {
     this.fetchShipArrival()
   },
 
   methods: {
     async fetchShipArrival() {
+      console.log("Fetching Ship Arrival...") // Log to check when it's called
+
       const config = {
         params: {
           search: this.searchQuery
@@ -167,11 +168,11 @@ export default {
       try {
         const res = await axios.get("/api/v1/inspection/", config)
         this.shipArrival = res.data.data
-        this.currentPage = 1
+        this.currentPage = 1 // Reset to the first page when data is fetched
 
         console.log("💚 SHIP ARRIVAL FETCHED", this.shipArrival)
       } catch (error) {
-        console.error("💥 SHIP ARRIVAL ERROR :", error)
+        console.error("💥 SHIP ARRIVAL ERROR:", error)
       }
     },
 
@@ -290,9 +291,6 @@ export default {
     rowsPerPage() {
       this.updatePagination()
     }
-  },
-  created() {
-    this.fetchShipArrival()
   }
 }
 </script>

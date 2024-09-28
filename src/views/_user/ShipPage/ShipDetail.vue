@@ -23,7 +23,7 @@
           </div>
           <div class="text-end">
             Nama Kapal
-            <h5 style="font-weight: bold">{{ formatShipStatus(ship.ship_name) || "DATA KOSONG" }}</h5>
+            <h6 style="font-weight: bold">{{ formatShipStatus(ship.ship_name) || "DATA KOSONG" }}</h6>
           </div>
         </div>
       </b-card>
@@ -453,19 +453,21 @@ export default {
       if (newShipName) {
         const dataToUpdate = {
           ship_id: this.ship.id,
-          ship_name: this.ship.ship_name,
+          ship_name: newShipName,
+          owner_name: this.ship.detail.owner_name,
+          responsible_name: this.ship.responsible_name,
           type: this.ship.detail.type,
           dimension: this.ship.detail.dimension,
-          harbour: this.ship.detail.harbour,
-          siup: this.ship.detail.siup,
-          bkp: this.ship.detail.bkp,
-          selar_mark: this.ship.detail.selar_mark,
           gt: this.ship.detail.gt,
-          owner_name: this.ship.detail.owner_name,
           iot_phone: this.ship.detail.iot_phone,
-          device_id: this.ship.detail.device_id,
-          responsible_name: this.ship.detail.responsible_name
+          device_id: this.ship.device_id,
+          harbour: this.ship.detail.harbour,
+          selar_mark: this.ship.detail.selar_mark,
+          siup: this.ship.detail.siup,
+          bkp: this.ship.detail.bkp
         }
+
+        // console.log(dataToUpdate)
 
         const url = `/api/v1/ship/update-detail`
 
@@ -515,15 +517,18 @@ export default {
       if (newShipOwner) {
         const dataToUpdate = {
           ship_id: this.ship.id,
+          ship_name: this.ship.ship_name,
+          owner_name: newShipOwner,
+          responsible_name: this.ship.responsible_name,
           type: this.ship.detail.type,
           dimension: this.ship.detail.dimension,
-          harbour: this.ship.detail.harbour,
-          siup: this.ship.detail.siup,
-          bkp: this.ship.detail.bkp,
-          selar_mark: this.ship.detail.selar_mark,
           gt: this.ship.detail.gt,
-          owner_name: newShipOwner,
-          iot_phone: this.ship.detail.iot_phone
+          iot_phone: this.ship.detail.iot_phone,
+          device_id: this.ship.device_id,
+          harbour: this.ship.detail.harbour,
+          selar_mark: this.ship.detail.selar_mark,
+          siup: this.ship.detail.siup,
+          bkp: this.ship.detail.bkp
         }
 
         const url = `/api/v1/ship/update-detail`
@@ -575,15 +580,18 @@ export default {
       if (newShipResponsible) {
         const dataToUpdate = {
           ship_id: this.ship.id,
+          ship_name: this.ship.ship_name,
+          owner_name: this.ship.detail.owner_name,
+          responsible_name: newShipResponsible,
           type: this.ship.detail.type,
           dimension: this.ship.detail.dimension,
-          harbour: this.ship.detail.harbour,
-          siup: this.ship.detail.siup,
-          bkp: this.ship.detail.bkp,
-          selar_mark: this.ship.detail.selar_mark,
           gt: this.ship.detail.gt,
-          owner_name: this.ship.detail.owner_name,
-          iot_phone: this.ship.detail.iot_phone
+          iot_phone: this.ship.detail.iot_phone,
+          device_id: this.ship.device_id,
+          harbour: this.ship.detail.harbour,
+          selar_mark: this.ship.detail.selar_mark,
+          siup: this.ship.detail.siup,
+          bkp: this.ship.detail.bkp
         }
 
         const url = `/api/v1/ship/update-detail`

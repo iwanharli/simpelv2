@@ -18,7 +18,6 @@ const publicPath = process.env.BASE_URL
 axios.interceptors.response.use(
     response => response,
     error => {
-
         if (error.response && error.response.status === 401) {
             Swal.fire({
                 title: "Orang lain sedang login menggunakan akun ini",
@@ -40,19 +39,22 @@ axios.interceptors.response.use(
                 allowOutsideClick: false,
                 allowEscapeKey: false,
             })
-        } else {
+        } else if (error.response.status === 429) {
+            // Handle 429 Too Many Requests
             Swal.fire({
-                icon: "error",
-                title: "429",
-                text: "Too Many Request, Reload in 1 Minute",
+                title: "Terlalu Banyak Permintaan",
+                text: "Mencoba ulang dalam 60 detik",
+                icon: "warning",
+                backdrop: `
+                    rgba(255, 0, 0, 0.8) // Red backdrop for 429 error
+                `,
                 showConfirmButton: false,
-                timer: 30000
-            })
+                allowOutsideClick: false,
+            });
 
             setTimeout(() => {
-                location.reload()
-
-            }, 60000)
+                location.reload(); // Reload the page after 60 seconds
+            }, 60000);
         }
 
         return Promise.reject(error);

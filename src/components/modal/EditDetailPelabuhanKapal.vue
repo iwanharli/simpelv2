@@ -119,17 +119,18 @@ export default {
       // Prepare for update
       const dataToUpdate = {
         ship_id: this.shipDetail.id,
+        ship_name: this.shipDetail.ship_name,
+        owner_name: this.shipDetail.owner_name,
+        responsible_name: this.shipDetail.responsible_name,
         type: this.shipDetail.type,
         dimension: this.mergedDimensions,
-        harbour: this.shipDetail.harbour,
-        siup: this.shipDetail.siup,
-        bkp: this.shipDetail.bkp,
-        selar_mark: this.shipDetail.selar_mark,
         gt: this.shipDetail.gt,
-        owner_name: this.shipDetail.owner_name,
         iot_phone: this.shipDetail.iot_phone,
         device_id: this.shipDetail.device_id,
-        responsible_name: this.shipDetail.responsible_name
+        harbour: this.shipDetail.harbour,
+        selar_mark: this.shipDetail.selar_mark,
+        siup: this.shipDetail.siup,
+        bkp: this.shipDetail.bkp,
       }
 
       // console.log(dataToUpdate)

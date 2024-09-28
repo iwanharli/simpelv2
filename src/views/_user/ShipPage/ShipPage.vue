@@ -3,7 +3,7 @@
     <!-- REGISTERED SHIP  -->
     <b-row class="p-4">
       <b-col xl="12">
-        <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+        <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="100">
           <b-card-header class="pb-4" style="background: #7000ff; border-radius: 10px 10px 0px 0px">
             <div class="header-title">
               <b-row>
@@ -27,13 +27,13 @@
           <!-- REGISTERED SHIP TABLE -->
           <b-card-body class="p-0">
             <div class="table-responsive">
-              <table id="basic-table" class="table table-border mb-0" role="grid">
+              <table id="basic-table table-border" class="table table-md table-border mb-0" role="grid">
                 <thead>
                   <tr class="text-white" style="background: #7000ff94; border-top: 1px solid white">
                     <th style="font-weight: bolder; width: 5px" class="text-center">ID</th>
                     <th style="font-weight: bolder">NAMA KAPAL</th>
-                    <th style="font-weight: bolder">NAMA PENANGGUNG JAWAB</th>
-                    <th style="font-weight: bolder" class="text-center">STATUS</th>
+                    <th style="font-weight: bolder">PENANGGUNG JAWAB</th>
+                    <!-- <th style="font-weight: bolder" class="text-center">STATUS</th> -->
                     <th style="font-weight: bolder" class="text-center">TANGGAL TERDAFTAR</th>
                     <th style="width: 5%"></th>
                   </tr>
@@ -47,16 +47,16 @@
                     <td class="text-center bg-soft-light">
                       {{ index + 1 }}
                     </td>
-                    <td>
-                      <span style="text-transform: uppercase; font-weight: bold">{{ item.ship_name }}</span> <br />
-                      <small>📱 {{ item.device_id }}</small>
+                    <td class="p-2" style="display: flex; align-items: center">
+                      <img src="@/assets/images/sea2.gif" style="width: 45px; height: 45px; border-radius: 10px; background: #7f91ff; padding: 3px; margin-right: 8px" v-if="item.on_ground === 0" />
+                      <img src="@/assets/images/walk.gif" style="width: 45px; height: 45px; border-radius: 10px; background: #7f91ff; padding: 3px; margin-right: 8px" v-else />
+                      <div>
+                        <span style="text-transform: uppercase; font-weight: bold">{{ item.ship_name }}</span> <br />
+                        <small>📱 {{ item.device_id }}</small>
+                      </div>
                     </td>
                     <td style="text-transform: uppercase; font-weight: bolder">
                       {{ item.responsible_name }}
-                    </td>
-                    <td class="text-center">
-                      <img src="@/assets/images/sea2.gif" style="width: 45px; height: 45px; border-radius: 10px; background: #7f91ff; padding: 3px" v-if="item.on_ground === 0" />
-                      <img src="@/assets/images/walk.gif" style="width: 45px; height: 45px; border-radius: 10px; background: #7f91ff; padding: 3px" v-else />
                     </td>
                     <td style="text-transform: uppercase" class="text-center">
                       {{ item.created_at }}
@@ -141,12 +141,23 @@
 <script>
 import AOS from "aos"
 import axios from "axios"
+import axiosRetry from "axios-retry"
 import Swal from "sweetalert2"
 // import Vue3autocounter from "vue3-autocounter"
 import "@/assets/custom-vue/css/pagination.css"
 
 import { onMounted } from "vue"
 import { RouterLink } from "vue-router"
+
+axiosRetry(axios, {
+  retries: 3, // Number of retries
+  retryDelay: (retryCount) => {
+    return retryCount * 1000 // Exponential backoff
+  },
+  retryCondition: (error) => {
+    return error.response && error.response.status === 429 // Retry only on 429 status
+  }
+})
 
 export default {
   name: "Ship Page",

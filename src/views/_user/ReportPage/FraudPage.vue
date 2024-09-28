@@ -1,7 +1,7 @@
 <template>
   <b-row class="p-4">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="110">
         <b-card-header class="bg-secondary text-light pb-4">
           <div class="header-title">
             <b-row>
@@ -37,7 +37,7 @@
                   <td colspan="7" class="bg-soft-white">Data kosong</td>
                 </tr>
 
-                <tr v-for="(item, index) in paginatedFraudReports" :key="index" v-else>
+                <tr v-for="(item, index) in paginatedFraudReports" :key="index" data-aos="fade-left" :data-aos-delay="100 * (index + 2)" v-else>
                   <td class="text-center bg-soft-light">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
@@ -61,7 +61,7 @@
                   <td class="text-center">
                     {{ item.log_date }}
                   </td>
-                  <td class="text-center bg-soft-danger">
+                  <td class="text-center bg-soft-primary">
                     <RouterLink :to="{ name: 'admin.shipDetail', params: { shipId: item.ship_id } }">
                       <button class="btn btn-sm btn-primary" type="button" id="kapal_detail"><i class="ti ti-search me-sm-1"></i> DETAIL</button>
                     </RouterLink>
@@ -111,8 +111,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="validationDownload()">Download</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="validationDownload()">DOWNLOAD</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">BATAL</button>
         </div>
       </div>
     </div>

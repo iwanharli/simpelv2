@@ -1,7 +1,7 @@
 <template>
   <b-row class="p-4">
     <b-col xl="12">
-      <div class="card card-custom bg-soft-light" data-aos="fade-down" data-aos-delay="110">
+      <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="100">
         <b-card-header class="bg-secondary pb-3">
           <div class="header-title">
             <b-row>
@@ -35,14 +35,14 @@
                   <td colspan="6" class="bg-soft-white">Data kosong</td>
                 </tr>
 
-                <tr v-for="(item, index) in paginatedApprovedData" :key="index">
+                <tr v-for="(item, index) in paginatedApprovedData" :key="index" data-aos="fade-left" :data-aos-delay="100 * (index + 2)" v-else>
                   <td class="text-center bg-soft-light">
                     {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                   </td>
-                  <td style="text-transform: uppercase; font-weight: bolder" data-label="🚢">
+                  <td class="p-2" style="text-transform: uppercase; font-weight: bolder" data-label="🚢">
                     {{ item.ship_name }}
                   </td>
-                  <td data-label="👲">
+                  <td class="p-2" data-label="👲">
                     <span style="font-weight: bold; text-transform: uppercase">{{ item.responsible_name }}</span> <br />
                     <small>📱{{ item.device_id }}</small>
                   </td>
