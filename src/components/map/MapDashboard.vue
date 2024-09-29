@@ -1,79 +1,10 @@
 <template>
   <div id="map_dashboard" class="simpel-map-container">
-    <!-- <div id="loading" style="display: none">
-      <div class="spinner"></div>
-    </div> -->
-
     <div id="mapDashboard" style="z-index: 0px !important"></div>
 
     <div id="shipDetailsDiv" class="simpel-ship-detail"></div>
 
-    <a class="btn btn-fixed-end btn-secondary btn-icon btn-setting" id="arrivalBtn" v-if="!muncul" v-on:click="toggleArrival()" style="border-radius: 20px 0px 0px 20px; border: 2px solid white">
-      <div class="animated-scale" style="font-size: 22px">🚢</div>
-    </a>
-
-    <div id="shipArrival" :class="['simpel-ship-arrival', 'inspeksi-mobile', 'bg-soft-light', muncul ? 'show' : '']">
-      <button v-on:click="toggleArrival()" id="insideArrivalBtn">X</button>
-      <b-card-header class="bg-secondary text-light pb-4">
-        <div class="header-title">
-          <b-row>
-            <b-col xl="6" lg="6" md="12" sm="12">
-              <h6 style="font-weight: bold; color: white">KEDATANGAN KAPAL TERBARU</h6>
-            </b-col>
-            <b-col xl="6" lg="6" md="12" sm="12" class="d-flex justify-content-end">
-              <RouterLink :to="{ name: 'admin.arrival' }">
-                <button class="btn btn-sm btn-primary text-white" style="margin-top: 0px !important" type="button" id="kapal_detail" @click="downloadCSV">SEMUA KEDATANGAN ></button>
-              </RouterLink>
-            </b-col>
-          </b-row>
-        </div>
-      </b-card-header>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table id="basic-table" class="table table-border mb-0" role="grid">
-            <thead>
-              <tr class="bg-solid-secondary text-secondary">
-                <th style="font-weight: bolder; width: 3px" class="text-center">ID</th>
-                <th style="font-weight: bolder">NAMA KAPAL</th>
-                <th style="font-weight: bolder" class="text-center">CHECKIN</th>
-                <th style="width: 5%"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Check if pendingList has data -->
-              <tr v-if="!this.shipArrival">
-                <td colspan="6" class="bg-soft-secondary">Data kosong</td>
-              </tr>
-
-              <tr v-for="(item, index) in this.shipArrival" :key="index++" v-else>
-                <td class="text-center bg-solid-light" style="font-weight: bolder">
-                  {{ index }}
-                </td>
-                <td class="bg-solid-light" style="text-transform: uppercase; font-weight: bolder">
-                  {{ item.ship_name }}
-                </td>
-                <td class="bg-solid-light text-center">
-                  {{ item.checkin_date }}
-                </td>
-                <td class="text-center bg-solid-light">
-                  <span class="badge bg-info ml-2 p-1" style="font-size: 10px; width: 100%">
-                    INSPEKSI &nbsp;
-                    <span class="circle-dashboard" style="background-color: green" v-if="item.is_inspected === 1"></span>
-                    <span class="circle-dashboard" style="background-color: red" v-else></span>
-                  </span>
-                  <br />
-                  <span class="badge bg-info ml-2 p-1 mt-1" style="font-size: 10px; width: 100%">
-                    REPORT &nbsp;
-                    <span class="circle-dashboard" style="background-color: green" v-if="item.is_reported === 1"></span>
-                    <span class="circle-dashboard" style="background-color: red" v-else></span>
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <shipArrivalDashboard />
   </div>
 </template>
 
@@ -81,11 +12,11 @@
 import L from "leaflet"
 import axios from "axios"
 import AOS from "aos"
+import { onMounted } from "vue"
+import shipArrivalDashboard from "@/components/modal/ShipArrivalDashboard.vue"
+
 import "leaflet.markercluster"
 import "leaflet/dist/leaflet.css"
-
-import { onMounted } from "vue"
-
 import markerKapal from "@/assets/images/ship-marker.png"
 import markerNelayan from "@/assets/images/fisherman-marker.png"
 
@@ -102,6 +33,10 @@ export default {
         duration: 800
       })
     })
+  },
+
+  components: {
+    shipArrivalDashboard
   },
 
   data() {
@@ -124,35 +59,23 @@ export default {
   },
 
   mounted() {
-    // this.showLoading() // Show the loading spinner
-    Promise.all([this.initializeMap(), this.initializeWebSocket(), this.fetchShipDocking()]).finally(() => {
-      // setTimeout(() => {
-      //   this.hideLoading() // Hide the loading spinner after 1 second
-      // }, 1000) // Delay of 1 second (1000 milliseconds)
+    Promise.all([this.initializeMap(), this.initializeWebSocket()]).finally(() => {
+      // ---
     })
   },
 
   beforeRouteLeave(to, from, next) {
-    console.log(`Navigating to: ${to.name}`);
-    this.closeWebSocket(); // Close WebSocket when leaving the route
-    next(); // Continue navigation
+    console.log(`Navigating to: ${to.name}`)
+    this.closeWebSocket() // Close WebSocket when leaving the route
+    next()
   },
 
   unmounted() {
-    this.closeWebSocket(); // Ensure WebSocket is closed when the component is unmounted
+    this.closeWebSocket() // Ensure WebSocket is closed when the component is unmounted
   },
 
   methods: {
     /*****************/
-    async fetchShipDocking() {
-      try {
-        const config = { headers: { Authorization: `Bearer ${this.token}` } }
-        const res = await axios.get("/api/v1/dashboard/lastest-dock-ship", config)
-        this.shipArrival = res.data.data
-      } catch (error) {
-        console.error("Error fetching ship arrival data:", error)
-      }
-    },
 
     async initializeMap() {
       const tileUrls = {
@@ -264,23 +187,23 @@ export default {
 
     async initializeWebSocket() {
       if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-        console.log("WebSocket is already connected.");
-        return; // Skip initialization if already connected
+        console.log("WebSocket is already connected.")
+        return // Skip initialization if already connected
       }
 
       try {
-        this.socket = new WebSocket(this.ws_url);
-        this.socket.onopen = () => console.log("📶 WEBSOCKET CONNECTED");
-        this.socket.onmessage = (message) => this.processSocketData(message);
-        this.socket.onerror = (error) => console.error("WebSocket error:", error);
+        this.socket = new WebSocket(this.ws_url)
+        this.socket.onopen = () => console.log("📶 WEBSOCKET CONNECTED")
+        this.socket.onmessage = (message) => this.processSocketData(message)
+        this.socket.onerror = (error) => console.error("WebSocket error:", error)
         this.socket.onclose = (event) => {
-          console.log(event.code === 1000 ? "WebSocket disconnected" : `WebSocket disconnected with code ${event.code}`);
-          if (event.code !== 1000) setTimeout(() => this.initializeWebSocket(), 5000);
-        };
+          console.log(event.code === 1000 ? "WebSocket disconnected" : `WebSocket disconnected with code ${event.code}`)
+          if (event.code !== 1000) setTimeout(() => this.initializeWebSocket(), 5000)
+        }
       } catch (error) {
-        console.error("💥 WebSocket connection error:", error);
-        if (this.socket && this.socket.readyState === WebSocket.OPEN) this.socket.close();
-        setTimeout(() => this.initializeWebSocket(), 5000);
+        console.error("💥 WebSocket connection error:", error)
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) this.socket.close()
+        setTimeout(() => this.initializeWebSocket(), 5000)
       }
     },
 
@@ -293,26 +216,14 @@ export default {
 
     closeWebSocket() {
       if (this.socket) {
-        console.log("Closing WebSocket...");
-        this.socket.close(); // Close the WebSocket connection
-        this.socket = null; // Clean up the socket reference
-        console.log("📶 WEBSOCKET DISCONNECTED____");
+        console.log("Closing WebSocket...")
+        this.socket.close() // Close the WebSocket connection
+        this.socket = null // Clean up the socket reference
+        console.log("📶 WEBSOCKET DISCONNECTED____")
       } else {
-        console.log("No WebSocket connection to close.");
+        console.log("No WebSocket connection to close.")
       }
     },
-
-    /*****************/
-
-    // showLoading() {
-    //   const loadingDiv = document.getElementById("loading")
-    //   loadingDiv.style.display = "flex" // Show the loading spinner
-    // },
-
-    // hideLoading() {
-    //   const loadingDiv = document.getElementById("loading")
-    //   loadingDiv.style.display = "none" // Hide the loading spinner
-    // },
 
     toggleArrival() {
       this.muncul = !this.muncul

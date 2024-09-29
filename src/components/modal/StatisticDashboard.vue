@@ -1,4 +1,7 @@
 <template>
+  <div v-if="isDashboardChartVisible" class="bg-soft-light position-fixed top-0 start-50 translate-middle-x d-flex align-items-center scrollbar" style="z-index: 550; border-radius: 20px; margin-top: 160px"></div>
+  <button @click="toggleDashboardChart" class="btn btn-primary btn-statistic position-absolute bottom-0 start-0 mb-3" data-bs-toggle="modal" data-bs-target="#modalStatistics">Lihat Statistik</button>
+
   <div class="modal fade" id="modalStatistics" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content" style="background: #ffffff42; border: 4px solid white; border-radius: 30px">
@@ -86,10 +89,6 @@
       </div>
     </div>
   </div>
-
-  <div v-if="isDashboardChartVisible" class="bg-soft-light position-fixed top-0 start-50 translate-middle-x d-flex align-items-center scrollbar" style="z-index: 550; border-radius: 20px; margin-top: 160px"></div>
-
-  <button @click="toggleDashboardChart" class="btn btn-primary btn-statistic position-absolute bottom-0 start-0 mb-3" data-bs-toggle="modal" data-bs-target="#modalStatistics" style="border: 5px solid white">Lihat Statistik</button>
 </template>
 
 <script>
@@ -158,79 +157,83 @@ export default {
       }
     })
 
-    // Fetch data when the component mounts
     const fetchAllCharts = async () => {
       try {
         const config = createConfig() // Create axios config
 
-        // Using Promise.all to fetch all data concurrently
-        const [statisticResponse, terrainResponse, logsResponse] = await Promise.all([axios.get("/api/v1/dashboard/statistic", config), axios.get("/api/v1/dashboard/terrain-chart", config), axios.get("/api/v1/dashboard/logs-chart", config)])
+        // Make the API call to the new URL
+        const response = await axios.get("/api/v1/dashboard/terrain-logs-statistic", config)
 
-        // Handle responses for statistic data
-        if (statisticResponse.data?.data) {
-          statisticData.value = statisticResponse.data.data
-          console.log("💚 STATISTIC", statisticData.value)
-        } else {
-          console.error("💥 STATISTIC Error: No valid data found in response")
-        }
+        if (response.data?.data) {
+          const { statistic, terrain, logs_chart } = response.data.data
 
-        // Handle responses for terrain data
-        if (terrainResponse.data?.data) {
-          const terrainData = terrainResponse.data.data
-          const dataArray = Object.values(terrainData || {})
-          console.log("💚 TERRAIN CHART", dataArray)
+          // Handle responses for statistic data
+          if (statistic) {
+            statisticData.value = statistic
+            console.log("💚 STATISTIC", statisticData.value)
+          } else {
+            console.error("💥 STATISTIC Error: No valid data found in response")
+          }
 
-          // Ensure the array contains valid numbers before updating chart data
-          if (dataArray.every((item) => typeof item === "number")) {
-            chartCategory.value = {
-              series: dataArray,
-              chartOptions: {
-                labels: ["Darat", "Air"]
+          // Handle responses for terrain data
+          if (terrain) {
+            const dataArray = Object.values(terrain || {})
+            console.log("💚 TERRAIN CHART", dataArray)
+
+            // Ensure the array contains valid numbers before updating chart data
+            if (dataArray.every((item) => typeof item === "number")) {
+              chartCategory.value = {
+                series: dataArray,
+                chartOptions: {
+                  labels: ["Darat", "Air"]
+                }
+              }
+            } else {
+              console.error("💥 TERRAIN CHART Error: Invalid data format for the chart series")
+            }
+          } else {
+            console.error("💥 TERRAIN CHART Error: No valid data found in response")
+          }
+
+          // Handle responses for logs data
+          if (logs_chart) {
+            console.log("💚 LOGS CHART", logs_chart)
+
+            const keyOrder = ["checkin", "checkout", "fraud", "out_of_scope"]
+            const dataArray = keyOrder.map((key) => logs_chart[key] ?? 0)
+
+            // Update chartLogs with fetched data and keep existing options
+            chartLogs.value = {
+              series: [{ data: dataArray }],
+              options: {
+                ...chartLogs.value.options, // Preserve existing chart options
+                xaxis: { categories: ["CHECKIN", "CHECKOUT", "FRAUD", "OUT OF SCOPE"] }
               }
             }
           } else {
-            console.error("💥 TERRAIN CHART Error: Invalid data format for the chart series")
+            console.error("💥 LOGS CHART Error: No valid data found in response")
           }
         } else {
-          console.error("💥 TERRAIN CHART Error: No valid data found in response")
-        }
-
-        // Handle responses for logs data
-        if (logsResponse.data?.data) {
-          const logsData = logsResponse.data.data
-          console.log("💚 LOGS CHART", logsData)
-
-          const keyOrder = ["checkin", "checkout", "fraud", "out_of_scope"]
-          const dataArray = keyOrder.map((key) => logsData[key] ?? 0)
-
-          // Update chartLogs with fetched data and keep existing options
-          chartLogs.value = {
-            series: [{ data: dataArray }],
-            options: {
-              ...chartLogs.value.options, // Preserve existing chart options
-              xaxis: { categories: ["CHECKIN", "CHECKOUT", "FRAUD", "OUT OF SCOPE"] }
-            }
-          }
-        } else {
-          console.error("💥 LOGS CHART Error: No valid data found in response")
+          console.error("💥 Error: No valid data found in response")
         }
       } catch (error) {
         console.error("💥 Error fetching all charts:", error)
       }
     }
 
-    // Helper method to create axios config with Authorization header
     const createConfig = () => {
       const token = localStorage.getItem("token")
       return { headers: { Authorization: `Bearer ${token}` } }
     }
 
-    // Lifecycle hook to fetch data
-    fetchAllCharts() // Call the new method to fetch all data
-
     // Methods to toggle visibility of dashboard charts
-    const toggleDashboardChart = () => {
-      isDashboardChartVisible.value = !isDashboardChartVisible.value
+    const toggleDashboardChart = async () => {
+      try {
+        await fetchAllCharts()
+        isDashboardChartVisible.value = !isDashboardChartVisible.value
+      } catch (error) {
+        console.error("Error toggling dashboard chart:", error)
+      }
     }
 
     const closeDashboardChart = () => {
@@ -253,11 +256,27 @@ export default {
 .btn-statistic {
   z-index: 500;
   border-radius: 30px;
-  border: 5px solid white;
+  border: 3px solid white !important;
   padding: 20px;
   font-weight: bolder;
   margin-left: 20px;
+  animation: blink-shadow 1s infinite;
 }
+
+@keyframes blink-shadow {
+  0% {
+    box-shadow: 0 0 0px rgba(255, 165, 0, 1), 0 0 0px rgba(255, 165, 0, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(255, 165, 0, 1), 0 0 20px rgba(255, 165, 0, 1);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(255, 165, 0, 1), 0 0 0px rgba(255, 165, 0, 0.8);
+  }
+}
+
+
+
 
 .card-custom {
   border: 3px solid white;

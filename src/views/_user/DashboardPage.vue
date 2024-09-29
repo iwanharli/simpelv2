@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 0px !important;">
+  <div style="padding: 0px !important">
     <b-card no-body style="margin-bottom: 0px">
       <div class="position-relative">
         <MapDashboard />
@@ -38,16 +38,7 @@ export default {
 
   components: {
     MapDashboard,
-    ModalStatistic,
-  },
-
-  methods: {
-    toggleDashboardChart() {
-      this.isDashboardChartVisible = !this.isDashboardChartVisible
-    },
-    closeDashboardChart() {
-      this.isDashboardChartVisible = false
-    }
+    ModalStatistic
   }
 }
 </script>
