@@ -1,7 +1,7 @@
 <template>
   <b-row class="p-4">
     <!-- MAP DETAIL  -->
-    <b-col xl="12" class="bg-transparent" v-if="shipCurLat !== 0">
+    <b-col xl="12" class="bg-transparent" v-if="shipCurLat !== 0" data-aos="fade" data-aos-delay="100">
       <div style="border-radius: 20px; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5); border: 2px solid white">
         <MapDetail :shipCurLat="shipCurLat" :shipCurLong="shipCurLong" :shipOnGround="shipOnGround" :location-logs="locationLogs" :shipName="ship.ship_name" :ownerName="shipBio.owner_name" :responsibleName="ship.responsible_name" :status="ship.status" :openToastEditShipName="editShipName" v-if="shipCurLat && shipCurLong" />
 
@@ -15,7 +15,7 @@
 
   <!-- DETAIL KAPAL  -->
   <div class="row p-5 pt-3 pb-2">
-    <b-col class="col-lg-3 col-md-6">
+    <b-col class="col-lg-3 col-md-6" data-aos="fade-right" data-aos-delay="100">
       <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5); border-radius: 1px solid blue" @click="editShipName(ship.ship_name)">
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
@@ -28,7 +28,7 @@
         </div>
       </b-card>
     </b-col>
-    <b-col class="col-lg-3 col-md-6">
+    <b-col class="col-lg-3 col-md-6" data-aos="fade-right" data-aos-delay="100">
       <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" @click="editShipOwner(shipBio.owner_name)">
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
@@ -41,7 +41,7 @@
         </div>
       </b-card>
     </b-col>
-    <b-col class="col-lg-3 col-md-6">
+    <b-col class="col-lg-3 col-md-6" data-aos="fade-left" data-aos-delay="100">
       <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" @click="editShipResponsible(ship.responsible_name)">
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
@@ -54,7 +54,7 @@
         </div>
       </b-card>
     </b-col>
-    <b-col class="col-lg-3 col-md-6">
+    <b-col class="col-lg-3 col-md-6" data-aos="fade-left" data-aos-delay="100">
       <b-card style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)">
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
@@ -326,6 +326,19 @@ export default {
     ModalEditSpesifikasiKapal,
     ModalEditPelabuhanKapal,
     ModalEditLegalitasKapal
+  },
+
+  setup() {
+    onMounted(() => {
+      AOS.init({
+        disable: function () {
+          var maxWidth = 996
+          return window.innerWidth < maxWidth
+        },
+        once: true,
+        duration: 800
+      })
+    })
   },
 
   data() {

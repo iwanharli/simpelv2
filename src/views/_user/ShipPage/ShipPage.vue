@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- REGISTERED SHIP  -->
     <b-row class="p-4">
       <b-col xl="12">
         <div class="card card-custom bg-soft-light" data-aos="fade-left" data-aos-delay="100">
@@ -33,7 +32,6 @@
                     <th style="font-weight: bolder; width: 5px" class="text-center">ID</th>
                     <th style="font-weight: bolder">NAMA KAPAL</th>
                     <th style="font-weight: bolder">PENANGGUNG JAWAB</th>
-                    <!-- <th style="font-weight: bolder" class="text-center">STATUS</th> -->
                     <th style="font-weight: bolder" class="text-center">TANGGAL TERDAFTAR</th>
                     <th style="width: 5%"></th>
                   </tr>
@@ -88,17 +86,17 @@
     <div class="modal fade" id="modalAddShip" :v-model="showModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
-          <div class="modal-header bg-primary">
+          <div class="modal-header bg-primary" style="border-bottom: none;">
             <h4 class="modal-title text-white" style="font-weight: bold">TAMBAH KAPAL</h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body pt-0">
             <b-row class="p-2" style="background: #959595">
               <b-col xl="8" lg="8" md="12" sm="12" style="margin-top: 5px; margin-bottom: 5px">
-                <input type="text" class="form-control harbourName" id="harbourName" value="PELABUHAN NIZAM ZACHMAN" disabled />
+                <input type="text" class="form-control" id="harbourName" value="PELABUHAN NIZAM ZACHMAN" disabled />
               </b-col>
               <b-col xl="4" lg="4" md="12" sm="12" style="margin-top: 5px; margin-bottom: 5px">
-                <input type="text" class="form-control harbourCode" id="harbourCode" v-model="form.harbour_code" required disabled />
+                <input type="text" class="form-control" id="harbourCode" v-model="form.harbour_code" required disabled />
               </b-col>
             </b-row>
             <div class="row p-2 mt-2">

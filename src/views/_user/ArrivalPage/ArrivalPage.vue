@@ -41,7 +41,7 @@
 
                 <tr v-for="(item, index) in paginatedShips" :key="index" data-aos="fade-left" :data-aos-delay="100 * (index + 2)" v-else>
                   <td class="text-center bg-soft-light p-2">
-                    {{ index }}
+                    {{ index+1 }}
                   </td>
                   <td style="text-transform: uppercase; font-weight: bolder">
                     {{ item.ship_name }}

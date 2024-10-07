@@ -1,5 +1,5 @@
 <template>
-  <div id="map_dashboard" class="simpel-map-container">
+  <div id="map_dashboard" class="simpel-map-container" data-aos="fade" data-aos-delay="100">
     <div id="mapDashboard" style="z-index: 0px !important"></div>
 
     <div id="shipDetailsDiv" class="simpel-ship-detail"></div>
@@ -94,8 +94,10 @@ export default {
       L.control.zoom({ position: "topleft" }).addTo(this.leaflet_map)
 
       this.leaflet_layerGroups = L.markerClusterGroup().addTo(this.leaflet_map)
+      // Create a FeatureGroup for polygons
+      this.polygonGroup = L.featureGroup().addTo(this.leaflet_map)
 
-      this.fetchAppSettings()
+      await this.fetchAppSettings()
     },
 
     async fetchAppSettings() {
@@ -103,7 +105,7 @@ export default {
         const config = { headers: { Authorization: `Bearer ${this.token}` } }
         const res = await axios.get("api/v1/setting/web", config)
         this.harbour_name = res.data.data.harbour_name
-        this.harbour_geo = res.data.data.geofences
+        this.harbour_geo = res.data.data.zone
         this.drawHarbourGeofence()
       } catch (error) {
         console.error("Error fetching app settings:", error)
@@ -111,15 +113,56 @@ export default {
     },
 
     drawHarbourGeofence() {
-      if (Array.isArray(this.harbour_geo)) {
-        const geofenceCoords = this.harbour_geo.map((item) => [item.lat, item.long])
-        L.polygon(geofenceCoords, {
-          color: "#7367F0",
-          fillColor: "#A1B4FF",
-          fillOpacity: 0.5
-        }).addTo(this.leaflet_map)
+      const colors = [
+        { border: "yellow", fill: "yellow" },
+        { border: "blue", fill: "#3951ce8f" },
+        { border: "green", fill: "lightgreen" },
+        { border: "purple", fill: "violet" },
+        { border: "orange", fill: "#FFA500" },
+        { border: "red", fill: "pink" }
+      ]
 
-        console.log("💚 GEOFENCE SET")
+      if (Array.isArray(this.harbour_geo)) {
+        // Clear existing polygons before adding new ones
+        this.polygonGroup.clearLayers()
+
+        this.harbour_geo.forEach((zone, index) => {
+          if (Array.isArray(zone.geofences)) {
+            const geofenceCoords = zone.geofences
+              .map((item) => {
+                const lat = parseFloat(item.lat)
+                const lng = parseFloat(item.long)
+
+                if (isNaN(lat) || isNaN(lng)) {
+                  console.warn(`Invalid coordinates for zone "${zone.name}": lat=${item.lat}, long=${item.long}`)
+                  return null
+                }
+
+                return [lat, lng]
+              })
+              .filter((coord) => coord !== null) // Remove invalid coordinates
+
+            if (geofenceCoords.length < 3) {
+              console.warn(`Not enough valid coordinates to form a polygon for zone "${zone.name}".`)
+              return
+            }
+
+            const colorIndex = index % colors.length
+            const selectedColor = colors[colorIndex]
+
+            try {
+              L.polygon(geofenceCoords, {
+                color: selectedColor.border,
+                fillColor: selectedColor.fill,
+                fillOpacity: 0.5
+              }).addTo(this.leaflet_map)
+
+              console.log(`💚 GEOFENCE SET for zone: ${zone.name} with color: ${selectedColor.border}`)
+            } catch (error) {
+              console.error(`Error adding polygon for zone "${zone.name}":`, error)
+            }
+          }
+        })
       }
     },
 

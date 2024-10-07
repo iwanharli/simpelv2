@@ -60,7 +60,9 @@
                     {{ item.created_at }}
                   </td> -->
                   <td class="text-center bg-soft-primary p-2">
-                    <button class="btn btn-md btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalViewDetailApproved" @click="fetchShipAcceptedDetail(item.username)"><i class="ti ti-search me-sm-1"></i> DETAIL</button>
+                    <button class="btn btn-md btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalViewDetailApproved" @click="fetchShipAcceptedDetail(item.username)">
+                      <i class="ti ti-search me-sm-1"></i> DETAIL
+                    </button>
                   </td>
                 </tr>
               </tbody>

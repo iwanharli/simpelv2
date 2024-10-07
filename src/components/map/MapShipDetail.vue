@@ -17,77 +17,6 @@
         </div>
       </div>
     </div>
-
-    <!-- DETAIL KAPAL  -->
-    <div class="row p-4" style="position: absolute; top: 92%; left: 51%; width: 100%; transform: translate(-50%, -50%); z-index: 1; display: none">
-      <b-col class="col-lg-3 col-md-6">
-        <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5); border-radius: 1px solid blue" @click="editShipName(shipName)">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/ship.png" loading="lazy" />
-            </div>
-            <div class="text-end">
-              Nama Kapal
-              <h5 style="font-weight: bold">{{ shipName || "DATA KOSONG" }}</h5>
-            </div>
-          </div>
-        </b-card>
-      </b-col>
-      <b-col class="col-lg-3 col-md-6">
-        <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" @click="editShipOwner(ownerName)">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/owner.png" loading="lazy" />
-            </div>
-            <div class="text-end">
-              Pemilik
-              <h6 style="font-weight: bold">{{ ownerName || "DATA KOSONG" }}</h6>
-            </div>
-          </div>
-        </b-card>
-      </b-col>
-      <b-col class="col-lg-3 col-md-6">
-        <b-card class="hover-card" style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" @click="editShipResponsible(responsibleName)">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/responsible.png" loading="lazy" />
-            </div>
-            <div class="text-end">
-              Penanggung Jawab
-              <h6 style="font-weight: bold">{{ responsibleName || "DATA KOSONG" }}</h6>
-            </div>
-          </div>
-        </b-card>
-      </b-col>
-      <b-col class="col-lg-3 col-md-6">
-        <b-card style="box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <img class="rounded img-fluid avatar-50 me-3 p-2" style="background: #0055be5c; box-shadow: 0 4px 10px rgba(83, 83, 83, 0.5)" src="@/assets/images/icon/status.png" loading="lazy" />
-            </div>
-            <div class="text-end">
-              Status <br />
-              <div v-if="status">
-                <div class="badge bg-primary p-2" style="text-transform: capitalize" v-if="status === 'checkin'">
-                  <span>{{ status }}</span>
-                </div>
-                <div class="badge bg-info p-2" style="text-transform: capitalize" v-else-if="status === 'checkout'">
-                  <span>{{ status }}</span>
-                </div>
-                <div class="badge bg-warning p-2" style="text-transform: capitalize" v-else-if="status === 'out of scope'">
-                  <span>{{ status }}</span>
-                </div>
-              </div>
-              <div v-else>
-                <div class="badge bg-secondary p-2" style="text-transform: capitalize">
-                  <span>DATA KOSONG</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </b-card>
-      </b-col>
-    </div>
   </div>
 </template>
 
@@ -98,7 +27,7 @@ import markerStart from "@/assets/images/start.png"
 import markerFinish from "@/assets/images/finish.png"
 
 import axios from "axios"
-import Swal from "sweetalert2"
+import { onMounted } from "vue"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
 
@@ -152,13 +81,35 @@ export default {
   },
 
   mounted() {
-    this.getGeofence(),
-      setTimeout(() => {
-        this.mapShipDetail()
-      }, 200)
+    this.initMaps()
   },
 
   methods: {
+    async initMaps() {
+      const harborCenter = { lat: -6.097643, lng: 106.802428 }
+
+      this.leaflet_map = await L.map("mapDetail", {
+        zoomControl: true,
+        zoom: 1,
+        zoomAnimation: true,
+        fadeAnimation: true,
+        markerZoomAnimation: false
+      }).setView([harborCenter.lat, harborCenter.lng], 17)
+
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxNativeZoom: 19,
+        maxZoom: 30,
+        minZoom: 5
+      }).addTo(this.leaflet_map)
+
+      // After flying to the harbor, fly to the ship's position
+      setTimeout(() => {
+        this.setMarkerPosition()
+      }, 4000)
+
+      this.getGeofence()
+    },
+
     async getGeofence() {
       await axios
         .get("api/v1/setting/web", {
@@ -167,10 +118,63 @@ export default {
           }
         })
         .then((res) => {
-          this.geofence = res.data.data.geofences
-          this.fixGeofence = this.geofence.map((item) => [parseFloat(item.lat), parseFloat(item.long)])
+          const zones = res.data.data.zone
+          console.log("💚 ZONES__", zones)
 
-          console.log("💚 GET GEOFENCE__")
+          // Define variable to store the center of the harbor zone
+          let harborCenter = null
+
+          zones.forEach((zone, index) => {
+            if (Array.isArray(zone.geofences) && zone.geofences.length > 0) {
+              const geofenceCoords = zone.geofences
+                .map((geofence) => {
+                  const lat = parseFloat(geofence.lat)
+                  const long = parseFloat(geofence.long)
+
+                  // Check if lat and long are valid numbers
+                  if (isNaN(lat) || isNaN(long)) {
+                    console.error(`Invalid geofence coordinates: lat=${geofence.lat}, long=${geofence.long}`)
+                    return null // Return null for invalid coordinates
+                  }
+
+                  return [lat, long]
+                })
+                .filter((coords) => coords !== null) // Remove invalid coordinates
+
+              // console.log(`Zone ${zone.name} coordinates:`, geofenceCoords);
+
+              if (geofenceCoords.length > 0) {
+                // Define colors for the polygon
+                const colors = [
+                  { border: "yellow", fill: "yellow" },
+                  { border: "blue", fill: "#3951ce8f" },
+                  { border: "green", fill: "lightgreen" },
+                  { border: "purple", fill: "violet" },
+                  { border: "orange", fill: "lightorange" },
+                  { border: "red", fill: "pink" }
+                ]
+
+                // Choose a color based on the index
+                const colorIndex = index % colors.length
+                const selectedColor = colors[colorIndex]
+
+                // Draw the polygon on the map
+                L.polygon(geofenceCoords, {
+                  color: selectedColor.border,
+                  fillColor: selectedColor.fill,
+                  fillOpacity: 0.5
+                }).addTo(this.leaflet_map)
+
+                console.log(`💚 GEOFENCE added ${zone.name}___`)
+              } else {
+                console.warn(`⚠️ No valid geofence coordinates found for zone ${zone.name}`)
+              }
+            } else {
+              console.warn(`⚠️ Geofences not found or invalid for zone ${zone.name}`)
+            }
+          })
+
+          this.setMarkerPosition()
         })
         .catch((error) => {
           console.log("💥 FAILED GET GEOFENCE")
@@ -178,66 +182,25 @@ export default {
         })
     },
 
-    async mapShipDetail() {
-      // Check if the map already exists
-      if (this.leaflet_map) {
-        this.leaflet_map.remove() // Remove the existing map
-      }
+    async setMarkerPosition() {
+      this.leaflet_map.flyTo([this.shipCurLat, this.shipCurLong], 18, {
+        duration: 3
+      })
 
-      if (this.fixGeofence && Array.isArray(this.fixGeofence) && this.fixGeofence.length > 0 && !this.leaflet_map) {
-        // Create map
-        this.leaflet_map = await L.map("mapDetail", {
-          zoomControl: true,
-          zoom: 1,
-          zoomAnimation: false,
-          fadeAnimation: false,
-          markerZoomAnimation: false
-        }).setView([this.shipCurLat, this.shipCurLong], 18)
+      // Set marker icons
+      var iconKapal = L.icon({
+        iconUrl: markerKapal,
+        iconSize: [22, 42],
+        iconAnchor: [16, 32]
+      })
 
-        // Add tile layer
-        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxNativeZoom: 19,
-          maxZoom: 30,
-          minZoom: 5
-        }).addTo(this.leaflet_map)
+      var iconNelayan = L.icon({
+        iconUrl: markerNelayan,
+        iconSize: [35, 50]
+      })
 
-        // Check if geofence coordinates are valid
-        if (this.fixGeofence.every((coords) => Array.isArray(coords) && coords.length === 2)) {
-          var polygon = L.polygon(this.fixGeofence, {
-            color: "#7367F0",
-            fillColor: "#A1B4FF",
-            fillOpacity: 0.5
-          }).addTo(this.leaflet_map)
-
-          this.leaflet_map.fitBounds(polygon.getBounds())
-        } else {
-          console.error("Invalid geofence coordinates:", this.fixGeofence)
-        }
-
-        // Fly to current ship position
-        this.leaflet_map.flyTo([this.shipCurLat, this.shipCurLong], 18, {
-          duration: 3
-        })
-
-        // Set marker icons
-        var iconKapal = L.icon({
-          iconUrl: markerKapal,
-          iconSize: [22, 42],
-          iconAnchor: [16, 32]
-        })
-
-        var iconNelayan = L.icon({
-          iconUrl: markerNelayan,
-          iconSize: [35, 50]
-        })
-
-        var icon = this.shipOnGround === 1 ? iconNelayan : iconKapal
-        this.shipMarker = L.marker([this.shipCurLat, this.shipCurLong], { icon: icon }).addTo(this.leaflet_map)
-      } else if (this.leaflet_map) {
-        this.leaflet_map.flyTo([this.shipCurLat, this.shipCurLong], 18, {
-          duration: 3
-        })
-      }
+      var icon = this.shipOnGround === 1 ? iconNelayan : iconKapal
+      this.shipMarker = L.marker([this.shipCurLat, this.shipCurLong], { icon: icon }).addTo(this.leaflet_map)
     },
 
     async filterHistory() {

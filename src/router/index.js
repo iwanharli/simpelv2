@@ -106,6 +106,26 @@ const userRoutes = (prefix) => [
     component: () => import('@/views/_user/SettingPage/ApplicationPage.vue')
   },
   {
+    path: 'setting/geofence',
+    name: prefix + '.setting-geofence',
+    meta: { auth: true, name: 'SettingGeofencePage', isBanner: false },
+    component: () => import('@/views/_user/SettingPage/GeofencePage.vue')
+  },
+  {
+    path: 'setting/geofence/:geofenceId',
+    name: prefix + '.setting-geofenceDetail',
+    meta: { auth: true, name: 'SettingGeofenceDetailPage', isBanner: false },
+    component: () => import('@/views/_user/SettingPage/EditGeofence.vue'),
+  }, 
+  {
+    path: 'setting/geofence/add',
+    name: prefix + '.add-geofence',
+    meta: { auth: true, name: 'AddGeofencePage', isBanner: false },
+    component: () => import('@/views/_user/SettingPage/AddGeofence.vue')
+  },
+
+
+  {
     path: 'setting/geofence/929292',
     name: prefix + '.setting-geofence-tegalsari',
     meta: { auth: true, name: 'SettingPage', isBanner: false },
@@ -116,6 +136,12 @@ const userRoutes = (prefix) => [
     name: prefix + '.setting-geofence-nizamZachman',
     meta: { auth: true, name: 'SettingPage', isBanner: false },
     component: () => import('@/views/_user/SettingPage/GeofencePage_nizam.vue')
+  },
+  {
+    path: 'setting/geofence/test',
+    name: prefix + '.map-test',
+    meta: { auth: true, name: 'testPage', isBanner: false },
+    component: () => import('@/views/_user/SettingPage/tester.vue')
   },
 
   // USER 

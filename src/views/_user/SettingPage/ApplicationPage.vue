@@ -1,7 +1,7 @@
 <template>
-  <b-row class="p-4" style="min-height: 91vh">
+  <b-row class="p-4">
     <!-- SETTING APLIKASI  -->
-    <b-col xl="9" class="bg-transparent" data-aos="fade-right" data-aos-delay="100">
+    <b-col xl="8" class="bg-transparent" data-aos="fade-right" data-aos-delay="100">
       <div class="card bg-light" style="border-radius: 0px 0px 20px 20px">
         <b-card-header class="bg-secondary text-light pb-4">
           <div class="header-title">
@@ -15,79 +15,115 @@
             </b-row>
           </div>
         </b-card-header>
-        <div class="card-body p-5 bg-light" style="border-radius: 0px 0px 20px 20px; border: 5px solid #001f4d">
+        <div class="card-body p-5 pb-2 bg-light" style="border-radius: 0px 0px 0px 0px; border: 5px solid #001f4d; border-bottom: none;">
           <div class="row">
-            <div class="col-md-4 mb-5">
+            <div class="col-md-6 mb-4">
               <label class="form-label text-black" style="font-weight: bolder">KODE PELABUHAN</label>
-              <input type="text" class="form-control" v-model="harbourCode" required="" style="border-color: white" />
+              <input type="text" class="form-control" v-model="appSetting.harbour_code" required="" style="border-color: white" />
             </div>
-            <div class="col-md-4 mb-5">
+            <div class="col-md-6 mb-4">
               <label class="form-label text-black" style="font-weight: bolder">NAMA PELABUHAN</label>
-              <input type="text" class="form-control" v-model="harbourName" required="" style="border-color: white" />
+              <input type="text" class="form-control" v-model="appSetting.harbour_name" required="" style="border-color: white" />
             </div>
-            <div class="col-md-4 mb-5">
+            <div class="col-md-6 mb-4">
               <label class="form-label text-black" style="font-weight: bolder">KONTAK ADMIN</label>
-              <input type="text" class="form-control" v-model="adminContact" required="" style="border-color: white" />
+              <input type="text" class="form-control" v-model="appSetting.admin_contact" required="" style="border-color: white" />
             </div>
 
-            <div class="col-md-4 mb-5">
+            <div class="col-md-6 mb-4">
               <label class="form-label text-black" style="font-weight: bolder">MODE</label>
-              <select class="form-select" v-model="appMode" required="">
+              <select class="form-select" v-model="appSetting.mode" required="">
                 <option value="interval">Interval</option>
                 <option value="jarak">Jarak</option>
               </select>
             </div>
-            <div class="col-md-4 mb-5">
+            <div class="col-md-6 mb-4">
               <label class="form-label text-black" style="font-weight: bolder">INTERVAL</label>
-              <input type="number" class="form-control" placeholder="30" v-model="appInterval" required="" style="border-color: white" />
+              <input type="number" class="form-control" placeholder="30" v-model="appSetting.interval" required="" style="border-color: white" />
             </div>
-            <div class="col-md-4 mb-5">
+            <div class="col-md-6 mb-4">
               <label class="form-label text-black" style="font-weight: bolder">JARAK</label>
-              <input type="number" class="form-control" placeholder="30" v-model="appRange" required="" style="border-color: white" />
+              <input type="number" class="form-control" placeholder="30" v-model="appSetting.range" required="" style="border-color: white" />
             </div>
-
-            <div class="col-md-8">
-              <button class="btn btn-primary p-2 mt-2" type="submit" style="width: 100%" @click="updateMobileSetting">SIMPAN PERUBAHAN</button>
+          </div>
+        </div>
+        <div class="card-body bg-secondary" style="border-radius: 0px 0px 20px 20px; padding: 20px 50px 20px 50px">
+          <div class="row d-flex justify-content-between">
+            <div class="col-md-6">
+              <button class="btn btn-primary p-2 mt-2 mb-2" type="submit" style="width: 100%; border: 2px solid white" @click="updateMobileSetting">SIMPAN PERUBAHAN</button>
             </div>
             <div class="col-md-4">
-              <button class="btn btn-warning p-2 mt-2" type="submit" style="width: 100%" @click="resetSetting">RESET</button>
+              <button class="btn btn-warning p-2 mt-2 mb-2" type="submit" style="width: 100%; border: 2px solid white" @click="resetSetting">RESET</button>
             </div>
           </div>
         </div>
       </div>
     </b-col>
 
-    <!-- SETTING BIAYA  -->
-    <b-col xl="3">
-      <div class="card bg-light" data-aos="fade-down" data-aos-delay="110" style="border-radius: 0px 0px 20px 20px">
-        <b-card-header class="bg-secondary text-light pb-4">
+    <b-col xl="4" class="bg-transparent" data-aos="fade-left" data-aos-delay="100">
+      <div class="card bg-white" style="border-radius: 20px">
+        <b-card-header class="bg-warning text-light pb-4">
           <div class="header-title">
             <b-row>
               <b-col xl="9" lg="9" md="9" sm="9">
-                <h4 style="font-weight: bold; color: white">BIAYA LABUH</h4>
+                <h4 style="font-weight: bold; color: white">NOTES*</h4>
               </b-col>
             </b-row>
           </div>
         </b-card-header>
-        <div class="card-body p-5 bg-light" style="border-radius: 0px 0px 20px 20px; border: 5px solid #001f4d">
-          <div class="row">
-            <div class="col-md-12 mb-5">
-              <label class="form-label text-black" style="font-weight: bolder">BIAYA LABUH</label>
-              <input type="text" class="form-control" placeholder="30.000" v-model="formattedDockingCost" @input="formatDockingCost" required style="border-color: white; background: #edff0033" />
-            </div>
-            <div class="col-md-12 mb-5">
-              <label class="form-label text-black" style="font-weight: bolder">MULTIPLIER BIAYA</label>
-              <input type="number" class="form-control" placeholder="30" v-model="costMultiplier" required="" style="border-color: white; background: #edff0033" />
-            </div>
-
-            <div class="col-12">
-              <button class="btn btn-secondary p-2 mt-2" type="submit" style="width: 100%" @click="updateMobileSetting">SIMPAN PERUBAHAN</button>
-            </div>
-          </div>
-        </div>
+        <b-card-body style="background: #ffff0061; border: 5px solid #f16a1b; border-top: none; border-radius: 0px 0px 20px 20px; padding: 20px">
+          <ul style="list-style-type: none; padding: 0">
+            <li style="margin-bottom: 15px">
+              <div class="note-item"><strong style="color: #333">Kode Pelabuhan:</strong> <span>Input untuk kode pelabuhan.</span></div>
+            </li>
+            <li style="margin-bottom: 15px">
+              <div class="note-item"><strong style="color: #333">Nama Pelabuhan:</strong> <span>Input untuk nama pelabuhan.</span></div>
+            </li>
+            <li style="margin-bottom: 15px">
+              <div class="note-item"><strong style="color: #333">Kontak Admin:</strong> <span>Input untuk kontak admin.</span></div>
+            </li>
+            <li style="margin-bottom: 15px">
+              <div class="note-item"><strong style="color: #333">Mode:</strong> <span>Dropdown untuk memilih antara interval atau jarak.</span></div>
+            </li>
+            <li style="margin-bottom: 15px">
+              <div class="note-item"><strong style="color: #333">Waktu Interval:</strong> <span>Input untuk memasukkan waktu interval dalam detik.</span></div>
+            </li>
+            <li>
+              <div class="note-item"><strong style="color: #333">Jarak:</strong> <span>Input untuk memasukkan jarak dalam meter.</span></div>
+            </li>
+          </ul>
+        </b-card-body>
       </div>
     </b-col>
   </b-row>
+
+  <!-- MODAL  -->
+  <!-- <div class="modal fade" id="modalEditZone" :v-model="showModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary">
+          <h4 class="modal-title text-white" style="font-weight: bold">EDIT</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row p-2 mt-2">
+            <div class="col-12 mb-3">
+              <label class="form-label" for="validationDefault01" style="font-weight: bolder">DOCKING COST</label>
+              <input type="text" class="form-control" id="deviceId" v-model="zone.docking_cost" required />
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label" for="validationDefault01" style="font-weight: bolder">COST MULTIPLIER</label>
+              <input type="text" class="form-control" id="shipName" v-model="zone.cnost_multiplier" required />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer mt-4">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="validationAddShip()">Tambah</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+        </div>
+      </div>
+    </div>
+  </div> -->
 </template>
 
 <script>
@@ -113,30 +149,22 @@ export default {
 
   data() {
     return {
-      harbourCode: "",
-      harbourName: "",
-      adminContact: "",
-      appMode: "",
-      appInterval: "",
-      appRange: "",
-      appVersion: "",
-      appUrl: "",
-      dockingCost: 0,
-      costMultiplier: 0,
-      appGeofence: []
-    }
-  },
-
-  computed: {
-    formattedDockingCost: {
-      get() {
-        return this.dockingCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-      },
-      set(value) {
-        this.dockingCost = parseInt(value.replace(/\./g, ""), 10) || 0
+      appSetting: {
+        zone: []
       }
     }
   },
+
+  // computed: {
+  //   formattedDockingCost: {
+  //     get() {
+  //       return this.dockingCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+  //     },
+  //     set(value) {
+  //       this.dockingCost = parseInt(value.replace(/\./g, ""), 10) || 0
+  //     }
+  //   }
+  // },
 
   mounted() {
     this.getSettingApp()
@@ -149,52 +177,27 @@ export default {
       await axios
         .get("api/v1/setting/web", config)
         .then((res) => {
-          const appSetting = res.data.data
+          this.appSetting = res.data.data
 
-          this.harbourCode = appSetting.harbour_code
-          this.harbourName = appSetting.harbour_name
-          this.adminContact = appSetting.admin_contact
-          this.appMode = appSetting.mode
-          this.appInterval = appSetting.interval
-          this.appRange = appSetting.range
-          this.appVersion = appSetting.apk_min_version
-          this.appUrl = appSetting.apk_min_download
-          this.costMultiplier = appSetting.cost_multiplier
-          this.dockingCost = appSetting.docking_cost
-          this.appGeofence = appSetting.geofences
-
-          console.log("💚 SETTING FETCHED", appSetting)
+          console.log("💚 SETTING FETCHED", this.appSetting)
         })
         .catch((error) => {
           console.log("💥 GET SETTING FAILED")
-
           setTimeout(this.getSettingApp, 1000)
         })
     },
 
     async updateMobileSetting() {
-      if (parseInt(this.dockingCost) === 0) {
-        Swal.fire({
-          title: "Invalid Input",
-          text: "BIAYA LABUH tidak boleh 0",
-          icon: "error",
-          confirmButtonText: "OK"
-        })
-        return
-      }
-
       const config = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
       const updatedData = {
         harbour_code: parseInt(this.harbourCode),
         harbour_name: this.harbourName,
-        admin_contact: this.adminContact,
         mode: this.appMode,
-        apk_min_version: this.appVersion,
         interval: parseInt(this.appInterval),
         range: parseInt(this.appRange),
         docking_cost: parseInt(this.dockingCost),
         cost_multiplier: parseInt(this.costMultiplier),
-        apk_download_link: this.appUrl,
+        admin_contact: this.adminContact,
         geofence: this.appGeofence
       }
 
